@@ -1,0 +1,62 @@
+---
+import Icon from './Icon.astro';
+import {brand,copy,type Locale} from '../lib/site';
+
+interface Props {
+  locale: Locale;
+}
+
+const {locale} = Astro.props;
+const t = copy[locale];
+const contact = t.conversation;
+const emailUrl = brand.email ? `mailto:${brand.email}?subject=${encodeURIComponent(contact.subject)}` : '';
+---
+{(emailUrl || brand.linkedin) && <section class="conversation-card" aria-labelledby="conversation-title">
+  <div class="conversation-visual" aria-hidden="true">
+    <svg width="344" height="164" viewBox="0 0 344 164" fill="none">
+      <path d="M12 108h88V28h213M28 147h211V71h95" stroke="currentColor" stroke-dasharray="3 6" opacity=".32"/>
+      <circle cx="28" cy="147" r="3" fill="currentColor" opacity=".55"/>
+      <circle cx="313" cy="28" r="3" fill="currentColor" opacity=".55"/>
+      <path class="conversation-bubble bubble-back" d="M156 83a13 13 0 0 1 13-13h119a13 13 0 0 1 13 13v37a13 13 0 0 1-13 13h-11v13l-19-13h-89a13 13 0 0 1-13-13z"/>
+      <path d="M216 97h61m-61 12h44" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".48"/>
+      <path class="conversation-bubble bubble-front" d="M45 37a13 13 0 0 1 13-13h114a13 13 0 0 1 13 13v36a13 13 0 0 1-13 13H88l-19 14V86H58a13 13 0 0 1-13-13z"/>
+      <path d="M69 47h89M69 60h56" stroke="currentColor" stroke-width="2" stroke-linecap="round" opacity=".66"/>
+    </svg>
+  </div>
+  <div class="conversation-body">
+    <h2 id="conversation-title">{contact.heading}</h2>
+    <p>{contact.support}</p>
+    {emailUrl && <form class="conversation-form" data-conversation data-email-url={emailUrl} hidden>
+      <label for="conversation-message">{contact.messageLabel}</label>
+      <textarea id="conversation-message" name="message" rows="4" maxlength="1200" placeholder={contact.placeholder} aria-describedby="conversation-email-hint"></textarea>
+      <p id="conversation-email-hint">{contact.emailHint}</p>
+      <button class="button primary" type="submit">{t.contact}<Icon name="diagonal" size={16}/></button>
+    </form>}
+    <div class="contact-options">
+      {brand.linkedin && <a class:list={['contact-option',!emailUrl && 'contact-option-primary']} href={brand.linkedin} data-analytics-action="linkedin_clicked" data-cta-location="connect">
+        <span class="tile-icon linkedin-icon" aria-hidden="true">in</span>
+        <span><strong>{contact.linkedinTitle}</strong><small>{contact.linkedinDescription}</small></span>
+        <Icon name="diagonal" size={17}/>
+      </a>}
+      {emailUrl && <a class="contact-option" href={emailUrl} data-analytics-action="email_clicked" data-cta-location="connect">
+        <span class="tile-icon"><Icon name="mail"/></span>
+        <span><strong>{contact.emailTitle}</strong><small>{contact.emailHint}</small></span>
+        <Icon name="diagonal" size={17}/>
+      </a>}
+    </div>
+  </div>
+</section>}
+{emailUrl && <script>
+  import {track} from '../lib/analytics';
+  for (const form of document.querySelectorAll<HTMLFormElement>('[data-conversation]')) {
+    const message = form.querySelector('textarea')!;
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      track('conversation_started', {cta_location:'composer'});
+      track('email_clicked', {cta_location:'composer'});
+      const body = message.value.replace(/\r?\n/g, '\r\n');
+      window.location.href = form.dataset.emailUrl + '&body=' + encodeURIComponent(body);
+    });
+    form.hidden = false;
+  }
+</script>}

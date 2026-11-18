@@ -1,0 +1,44 @@
+---
+import {measurementId} from '../lib/analytics';
+import {copy,url,type Locale} from '../lib/site';
+
+interface Props { locale: Locale; settings: boolean }
+const {locale,settings} = Astro.props;
+const id = measurementId();
+const t = copy[locale].analytics;
+---
+{id && <div data-ga-id={id}>
+  <section class="analytics-consent" data-consent-banner aria-labelledby="analytics-banner-title" hidden>
+    <div class="wrap analytics-banner-inner">
+      <div>
+        <h2 id="analytics-banner-title">{t.title}</h2>
+        <p>{t.banner} <a class="text-link" href={url(locale,'privacy')}>{copy[locale].nav[6]}</a></p>
+      </div>
+      <div class="analytics-actions">
+        <button class="button secondary" type="button" data-consent-choice="granted">{t.accept}</button>
+        <button class="button secondary" type="button" data-consent-choice="denied">{t.decline}</button>
+      </div>
+    </div>
+  </section>
+  {settings && <section class="analytics-settings" data-consent-panel aria-labelledby="analytics-settings-title" hidden>
+    <h2 id="analytics-settings-title">{t.title}</h2>
+    <div role="status">
+      <p data-consent-status="unset">{t.unset}</p>
+      <p data-consent-status="granted" hidden>{t.allowed}</p>
+      <p data-consent-status="denied" hidden>{t.disabled}</p>
+    </div>
+    <div class="analytics-actions">
+      <button class="button secondary" type="button" data-consent-choice="granted">{t.accept}</button>
+      <button class="button secondary" type="button" data-consent-choice="denied">{t.decline}</button>
+    </div>
+  </section>}
+</div>}
+<script>
+  import {initializeAnalytics} from '../lib/analytics';
+  const root = document.querySelector<HTMLElement>('[data-ga-id]');
+  if (root) {
+    const panel = root.querySelector<HTMLElement>('[data-consent-panel]');
+    if (panel) panel.hidden = false;
+    initializeAnalytics(root);
+  }
+</script>

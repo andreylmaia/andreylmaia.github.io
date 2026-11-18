@@ -1,7 +1,8 @@
 ---
+import type {ConversationLocation} from '../lib/analytics';
 import {copy, url, type Locale} from '../lib/site';
 import Icon from './Icon.astro';
-const {locale} = Astro.props as {locale:Locale};
+const {locale,location} = Astro.props as {locale:Locale;location:ConversationLocation};
 const t = copy[locale];
 ---
 <section class="connect-band">
@@ -9,5 +10,5 @@ const t = copy[locale];
     <h2>{t.connect[0]} <span>{t.connect[1]}</span></h2>
     <p>{t.connectDesc}</p>
   </div>
-  <a class="button primary" href={url(locale,'connect')}>{t.contact}<Icon name="diagonal" size={16}/></a>
+  <a class="button primary" data-analytics-action="conversation_started" data-cta-location={location} href={url(locale,'connect')}>{t.contact}<Icon name="diagonal" size={16}/></a>
 </section>

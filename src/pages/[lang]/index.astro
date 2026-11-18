@@ -7,7 +7,7 @@ import LabPreview from '../../components/LabPreview.astro';
 import Connect from '../../components/Connect.astro';
 import AboutIntro from '../../components/AboutIntro.astro';
 import Indicators from '../../components/Indicators.astro';
-import {brand, copy, labIds, locales, pillars, url, type Locale} from '../../lib/site';
+import {asset, brand, copy, labIds, locales, pillars, url, type Locale} from '../../lib/site';
 import {entries,resourceLabel} from '../../lib/editorial';
 export const getStaticPaths = () => locales.map(lang => ({params:{lang}}));
 const locale = Astro.params.lang as Locale;
@@ -16,7 +16,7 @@ const insights = await entries('insights',locale);
 const featured = insights.find(item => item.data.featured) || insights[0];
 const latest = featured ? [featured,...insights.filter(item => item !== featured).slice(0,3)] : [];
 const library = (await entries('library',locale)).filter(item => item.data.featured).slice(0,3);
-const schema = {'@type':'Person', name:brand.name, url:new URL(url(locale),Astro.site).href, sameAs:[brand.github,brand.linkedin].filter(Boolean), description:t.position};
+const schema = {'@type':'Person', name:brand.name, url:new URL(url(locale),Astro.site).href, sameAs:[brand.github,brand.linkedin].filter(Boolean), description:t.position, image:new URL(asset(brand.portrait.src),Astro.site).href};
 ---
 <Shell {locale} {schema}>
   <section class="hero">
@@ -59,5 +59,5 @@ const schema = {'@type':'Person', name:brand.name, url:new URL(url(locale),Astro
     <div class="section-head"><h2>{t.about}</h2></div>
     <AboutIntro {locale}><a class="text-link" href={url(locale,'about')}>{t.nav[4]}<Icon name="arrow" size={16}/></a></AboutIntro>
   </section>
-  <div class="wrap section connect-wrap"><Connect {locale}/></div>
+  <div class="wrap section connect-wrap"><Connect {locale} location="home"/></div>
 </Shell>

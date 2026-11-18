@@ -31,6 +31,7 @@ jobs:
         env:
           SITE_URL: ${{ vars.SITE_URL || steps.pages.outputs.origin }}
           SITE_BASE: ${{ vars.SITE_BASE || steps.pages.outputs.base_path }}
+          PUBLIC_GA_MEASUREMENT_ID: ${{ vars.PUBLIC_GA_MEASUREMENT_ID }}
       - uses: actions/upload-pages-artifact@v3
         if: github.ref == format('refs/heads/{0}', github.event.repository.default_branch) && github.event_name != 'pull_request'
         with:

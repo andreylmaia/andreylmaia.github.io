@@ -1,6 +1,6 @@
 ---
 import '../styles/site.css';
-import {analytics} from '../lib/analytics';
+import AnalyticsConsent from '../components/AnalyticsConsent.astro';
 import Icon from '../components/Icon.astro';
 import {brand, copy, language, other, sections, url, asset, type Locale} from '../lib/site';
 
@@ -41,11 +41,11 @@ const labels = locale === 'pt' ? {skip:'Ir para o conteúdo', menu:'Menu', theme
   <meta name="twitter:description" content={summary}/>
   <meta name="twitter:image" content={socialImage}/>
   {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify({'@context':'https://schema.org', ...schema}).replace(/</g,'\\u003c')}/>}
-  {analytics && <script is:inline defer src={analytics.scriptUrl}/>}
   <script is:inline>try { document.documentElement.dataset.theme = localStorage.getItem('am-theme') === 'dark' ? 'dark' : 'light'; } catch {}</script>
 </head>
 <body>
   <a class="skip-link" href="#main">{labels.skip}</a>
+  {route !== 'privacy' && <AnalyticsConsent {locale} settings={false}/>}
   <header class="site-header">
     <div class="wrap header-inner">
       <a class="wordmark" href={url(locale)}>{brand.wordmark}<b>.</b></a>
@@ -59,28 +59,31 @@ const labels = locale === 'pt' ? {skip:'Ir para o conteúdo', menu:'Menu', theme
       </div>
     </div>
   </header>
-  <main id="main"><slot/></main>
+  <main id="main" tabindex="-1"><slot/></main>
   <footer class="footer">
     <div class="wrap">
       <div class="footer-top">
         <div><a class="wordmark" href={url(locale)}>{brand.wordmark}<b>.</b></a><p>{t.signature}</p></div>
         <nav aria-label={labels.footer}>{sections.slice(0,6).map((section,i) => <a href={url(locale,section)}>{t.nav[i]}</a>)}</nav>
         <div class="social">
-          {brand.linkedin && <a href={brand.linkedin}>LinkedIn <Icon name="diagonal" size={13}/></a>}
+          {brand.linkedin && <a href={brand.linkedin} data-analytics-action="linkedin_clicked" data-cta-location="footer">LinkedIn <Icon name="diagonal" size={13}/></a>}
           <a href={brand.github}>GitHub <Icon name="diagonal" size={13}/></a>
-          {brand.email && <a href={'mailto:' + brand.email}>Email <Icon name="diagonal" size={13}/></a>}
+          {brand.email && <a href={'mailto:' + brand.email} data-analytics-action="email_clicked" data-cta-location="footer">Email <Icon name="diagonal" size={13}/></a>}
         </div>
       </div>
       <div class="footer-bottom"><span>© {new Date().getUTCFullYear()} {brand.name}</span><a href={url(locale,'privacy')}>{t.nav[6]}</a></div>
     </div>
   </footer>
   <script>
+    import {track} from '../lib/analytics';
     const theme = document.querySelector<HTMLButtonElement>('.theme-toggle');
     const root = document.documentElement;
     theme?.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
     theme?.addEventListener('click', () => {
-      root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      const nextTheme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+      root.dataset.theme = nextTheme;
       theme.setAttribute('aria-pressed', String(root.dataset.theme === 'dark'));
+      track('theme_changed', {theme:nextTheme});
       try { localStorage.setItem('am-theme', root.dataset.theme); } catch {}
     });
     const toggle = document.querySelector<HTMLButtonElement>('.menu-toggle');
@@ -93,7 +96,10 @@ const labels = locale === 'pt' ? {skip:'Ir para o conteúdo', menu:'Menu', theme
     });
     document.querySelector<HTMLElement>('[data-language]')?.addEventListener('click', event => {
       const link = event.currentTarget as HTMLElement;
-      try { localStorage.setItem('am-language', link.dataset.language || 'en'); } catch {}
+      const target = link.dataset.language;
+      if (target !== 'en' && target !== 'pt') return;
+      try { localStorage.setItem('am-language', target); } catch {}
+      track('language_changed', {target_language:target});
     });
   </script>
 </body>

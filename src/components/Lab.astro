@@ -35,6 +35,7 @@ const fields = [
   </div>
 </section>}
 <script>
+  import {trackLabUse} from '../lib/analytics';
   import {initialLedger,isBalanced,post,scenarios,unitEconomics} from '../lib/finance';
   import {labCopy} from '../lib/lab-copy';
   import {language,type Locale} from '../lib/site';
@@ -91,6 +92,7 @@ const fields = [
         const result = post(state,scenario,Math.round(amount.valueAsNumber * 100));
         if (!result.state) return issue(t.errors[result.error]);
         state = result.state;
+        trackLabUse('ledger');
         issue();
         render();
         const item = state.journal.at(-1)!;
@@ -101,15 +103,17 @@ const fields = [
     } else {
       const inputs = [...form.querySelectorAll('input')];
       const results = [...root.querySelectorAll<HTMLElement>('[data-result]')];
-      function render() {
+      function render(interaction = false) {
         const values = Object.fromEntries(inputs.map(input => [input.name,input.valueAsNumber]));
         const valid = inputs.every(input => input.validity.valid);
         const unit = valid ? unitEconomics(values as Parameters<typeof unitEconomics>[0]) : null;
         issue(unit ? '' : t.errors.inputs);
+        if (unit && interaction) trackLabUse('unit-economics');
         const output = unit ? [money.format(unit.revenue),money.format(unit.costs),money.format(unit.margin),money.format(unit.profit),unit.breakEven === null ? t.noBreak : integer.format(unit.breakEven)] : [];
         results.forEach((node,i) => node.textContent = output[i] || '—');
       }
-      form.addEventListener('input',render);
+      form.addEventListener('change',() => render(true));
+      form.addEventListener('input',() => render());
       form.addEventListener('submit',event => event.preventDefault());
       render();
     }

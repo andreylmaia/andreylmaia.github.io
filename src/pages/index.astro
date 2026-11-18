@@ -11,11 +11,19 @@ const pt = url('pt');
 <title>Andrey Maia</title>
 <link rel="canonical" href={new URL(en,Astro.site)}/>
 <noscript><meta http-equiv="refresh" content={`0;url=${en}`}/></noscript>
-<script is:inline define:vars={{en,pt}}>
-  let target = en;
-  try { if (localStorage.getItem('am-language') === 'pt') target = pt; } catch {}
-  location.replace(target);
-</script>
+
 </head>
-<body><a href={en}>English</a> · <a href={pt} lang="pt-BR">Português</a></body>
+<body><a href={en}>English</a> · <a href={pt} lang="pt-BR">Português</a>
+  <script>
+    import {campaignParams} from '../lib/analytics';
+    let locale = 'en';
+    try { if (localStorage.getItem('am-language') === 'pt') locale = 'pt'; } catch {}
+    const target = document.querySelector<HTMLAnchorElement>(locale === 'pt' ? 'a[lang=pt-BR]' : 'a');
+    if (target) {
+      const next = new URL(target.href);
+      next.search = campaignParams(location.search);
+      location.replace(next);
+    }
+  </script>
+</body>
 </html>

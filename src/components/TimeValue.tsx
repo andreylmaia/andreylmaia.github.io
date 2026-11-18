@@ -1,4 +1,5 @@
 import {useId,useState} from 'react';
+import {trackLabUse} from '../lib/analytics';
 import {timeValue} from '../lib/finance';
 import {labCopy} from '../lib/lab-copy';
 import {language,type Locale} from '../lib/site';
@@ -38,6 +39,8 @@ export default function TimeValue({locale}:{locale:Locale}) {
           <input name={name} type="number" defaultValue={initial} min={min} step={step} max={max} required
             onChange={event => {
               const value = event.currentTarget.validity.valid ? event.currentTarget.valueAsNumber : NaN;
+              const next = {...values,[name]:value};
+              if (value !== values[name] && timeValue(next)) trackLabUse('time-value');
               setValues(previous => ({...previous,[name]:value}));
               if (name === 'years') setSelected(null);
             }}/>
@@ -63,7 +66,10 @@ export default function TimeValue({locale}:{locale:Locale}) {
         <p className="chart-legend"><span><i/>{t.nominal}</span><span className="real"><i/>{t.real}</span></p>
         <div className="chart-range tool-fields">
           <label htmlFor={id}>{t.year} {integer.format(point.year)}</label>
-          <input id={id} type="range" min="0" max={last.year} value={point.year} onChange={event => setSelected(event.currentTarget.valueAsNumber)}/>
+          <input id={id} type="range" min="0" max={last.year} value={point.year} onChange={event => {
+            setSelected(event.currentTarget.valueAsNumber);
+            trackLabUse('time-value');
+          }}/>
         </div>
       </>}
       <details className="tool-note"><summary>{t.formulas}</summary>

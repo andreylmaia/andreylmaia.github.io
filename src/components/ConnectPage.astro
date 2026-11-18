@@ -1,0 +1,20 @@
+---
+import ConversationStarter from './ConversationStarter.astro';
+import {copy,type Locale} from '../lib/site';
+
+interface Props {
+  locale: Locale;
+}
+const {locale} = Astro.props;
+const t = copy[locale];
+---
+<div class="wrap connect-page">
+  <header class="connect-intro">
+    <h1>{t.connect[0]} <span>{t.connect[1]}</span></h1>
+    <p>{t.connectDesc}</p>
+    <ul class="contact-topics" aria-label={t.conversation.topics}>
+      {t.topics.map(topic => <li>{topic}</li>)}
+    </ul>
+  </header>
+  <ConversationStarter {locale}/>
+</div>

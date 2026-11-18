@@ -15,4 +15,4 @@ The ledger and unit economics use targeted browser scripts. The time value explo
 
 ## Optional analytics
 
-The default build ships without tracking. In `src/lib/analytics.ts`, supply an authorized HTTPS script URL and a description of local preferences and tracking in both languages. The shell and privacy pages use that configuration. Address the provider’s consent requirements before enabling it.
+`src/lib/analytics.ts` initializes the Google tag after consent and defines the event names and allowed parameters. Navigation, content, Labs and contact components send events through that module. `AnalyticsConsent.astro` presents localized consent choices and the controls on the Privacy page. The production build reads `PUBLIC_GA_MEASUREMENT_ID`. The site works without Analytics or browser storage. See the [README](../README.md#google-analytics-4) for setup and reporting.

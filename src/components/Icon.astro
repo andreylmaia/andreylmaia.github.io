@@ -1,7 +1,7 @@
 ---
-import {Activity,ArrowRight,ArrowUpRight,BookOpen,Boxes,Check,Globe,Layers,Menu,Moon,Sun,TrendingUp} from 'lucide-react';
+import {Activity,ArrowRight,ArrowUpRight,BookOpen,Boxes,Check,Globe,Layers,Mail,Menu,Moon,Sun,TrendingUp} from 'lucide-react';
 const {name, size = 20} = Astro.props;
-const icons = {activity:Activity,arrow:ArrowRight,diagonal:ArrowUpRight,book:BookOpen,boxes:Boxes,check:Check,globe:Globe,layers:Layers,menu:Menu,moon:Moon,sun:Sun,trend:TrendingUp};
+const icons = {activity:Activity,arrow:ArrowRight,diagonal:ArrowUpRight,book:BookOpen,boxes:Boxes,check:Check,globe:Globe,layers:Layers,mail:Mail,menu:Menu,moon:Moon,sun:Sun,trend:TrendingUp};
 const Glyph = icons[name as keyof typeof icons] || ArrowRight;
 ---
 <Glyph {size} strokeWidth={1.65} aria-hidden="true"/>
