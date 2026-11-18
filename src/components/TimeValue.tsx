@@ -1,4 +1,5 @@
-import {useId,useState} from 'react';
+import {useEffect,useId,useRef,useState} from 'react';
+import {restoreLabInputs,shareFields} from '../lib/lab-sharing';
 import {trackLabUse} from '../lib/analytics';
 import {timeValue} from '../lib/finance';
 import {labCopy} from '../lib/lab-copy';
@@ -16,6 +17,12 @@ export default function TimeValue({locale}:{locale:Locale}) {
   const [values,setValues] = useState({principal:10000,rate:8,inflation:4,years:20});
   const [selected,setSelected] = useState<number|null>(null);
   const id = useId();
+  const form = useRef<HTMLFormElement>(null);
+  useEffect(() => {
+    if (!form.current) return;
+    const restored = restoreLabInputs(form.current,shareFields['time-value']);
+    if (restored) setValues({principal:restored.principal,rate:restored.rate,inflation:restored.inflation,years:restored.years});
+  },[]);
   const valid = fields.every(([key,,min,,max]) => Number.isFinite(values[key]) && values[key] >= min && values[key] <= max);
   const result = valid ? timeValue(values) : null;
   const points = result?.points || [];
@@ -34,7 +41,7 @@ export default function TimeValue({locale}:{locale:Locale}) {
   return <section className="tool-layout">
     <div className="tool-panel">
       <h2>{t.controls}</h2>
-      <form className="tool-fields" onSubmit={event => event.preventDefault()} noValidate>
+      <form ref={form} className="tool-fields" onSubmit={event => event.preventDefault()} noValidate>
         {fields.map(([name,initial,min,step,max],i) => <label key={name}>{t.timeFields[i]}
           <input name={name} type="number" defaultValue={initial} min={min} step={step} max={max} required
             onChange={event => {
@@ -63,7 +70,7 @@ export default function TimeValue({locale}:{locale:Locale}) {
           <circle className="chart-nominal chart-dot" cx={x(point.year)} cy={y(point.nominal)} r="4"/>
           <circle className="chart-real chart-dot" cx={x(point.year)} cy={y(point.real)} r="4"/>
         </svg>
-        <p className="chart-legend"><span><i/>{t.nominal}</span><span className="real"><i/>{t.real}</span></p>
+        <p className="chart-legend"><span data-nominal-key><i/>{t.nominal}</span><span className="real" data-real-key><i/>{t.real}</span></p>
         <div className="chart-range tool-fields">
           <label htmlFor={id}>{t.year} {integer.format(point.year)}</label>
           <input id={id} type="range" min="0" max={last.year} value={point.year} onChange={event => {

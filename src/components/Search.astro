@@ -1,0 +1,129 @@
+---
+import Icon from './Icon.astro';
+import {asset,copy,labIds,sections,url,type Locale} from '../lib/site';
+const {locale} = Astro.props as {locale:Locale};
+const t = copy[locale];
+const pt = locale === 'pt';
+const shortcuts = [[t.explore,'insights'],[t.tools[0][0],'labs/' + labIds[0]],[t.discover,'labs'],[t.nav[3],'library'],[t.nav[4],'about'],[t.contact,'connect']];
+---
+<button class="icon-button" type="button" data-open-search aria-label={t.search} aria-keyshortcuts="Meta+K Control+K" hidden><Icon name="search" size={17}/></button>
+<dialog class="site-search" aria-labelledby="search-title" data-engine={asset('pagefind/pagefind.js')} data-base={asset('')} data-labels={JSON.stringify(Object.fromEntries(sections.map((section,i) => [section,t.nav[i]])))}>
+  <div class="search-heading"><h2 id="search-title">{t.search}</h2><button type="button" class="icon-button" data-close-search aria-label={pt ? 'Fechar busca' : 'Close search'}><Icon name="close" size={19}/></button></div>
+  <input type="search" autocomplete="off" aria-label={t.search} placeholder={pt ? 'Buscar no site…' : 'Search the site…'} autofocus/>
+  <p class="meta" role="status" data-loading={pt ? 'Buscando…' : 'Searching…'} data-none={pt ? 'Nenhum resultado encontrado.' : 'No results found.'} data-count={pt ? 'Resultados exibidos' : 'Results shown'} data-error={pt ? 'Busca indisponível. Use os atalhos abaixo.' : 'Search unavailable. Use the shortcuts below.'}></p>
+  <div data-shortcuts><h3>{pt ? 'Atalhos' : 'Quick links'}</h3><ul>{shortcuts.map(([label,path]) => <li><a href={url(locale,path)}>{label}</a></li>)}</ul></div>
+  <ul data-search-results></ul>
+</dialog>
+<script>
+  import {track} from '../lib/analytics';
+
+  type Hit = {url:string; excerpt:string; meta:{title?:string; section?:string}};
+  type Engine = {
+    options(options:{baseUrl:string}):Promise<void>;
+    init():Promise<void>;
+    search(query:string):Promise<{results:{data():Promise<Hit>}[]}>;
+  };
+  const openButton = document.querySelector<HTMLButtonElement>('[data-open-search]')!;
+  const dialog = document.querySelector<HTMLDialogElement>('.site-search')!;
+  const input = dialog.querySelector('input')!;
+  const status = dialog.querySelector<HTMLElement>('[role=status]')!;
+  const results = dialog.querySelector<HTMLElement>('[data-search-results]')!;
+  const shortcuts = dialog.querySelector<HTMLElement>('[data-shortcuts]')!;
+  const labels: Record<string,string> = JSON.parse(dialog.dataset.labels!);
+  let engine: Promise<Engine> | undefined;
+  let timeout: number;
+  let revision = 0;
+  let previous: HTMLElement | null;
+
+  function open() {
+    if (dialog.open) return;
+    previous = document.activeElement instanceof HTMLElement && document.activeElement !== document.body ? document.activeElement : openButton;
+    dialog.showModal();
+    input.focus();
+    track('search_opened', {});
+  }
+  openButton.hidden = false;
+  openButton.addEventListener('click',open);
+  dialog.querySelector('[data-close-search]')?.addEventListener('click',() => dialog.close());
+  dialog.addEventListener('close',() => previous?.focus());
+  document.addEventListener('keydown',event => {
+    if ((event.metaKey || event.ctrlKey) && !event.altKey && event.key.toLowerCase() === 'k') {
+      event.preventDefault();
+      open();
+    }
+  });
+
+  function addHit(hit:Hit) {
+    const li = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = hit.url;
+    const title = document.createElement('strong');
+    title.textContent = hit.meta.title || hit.url;
+    const section = hit.meta.section || '';
+    const label = document.createElement('small');
+    label.textContent = labels[section] || '';
+    const excerpt = document.createElement('p');
+    // Pagefind emits highlight markup. Copy only text and mark nodes into the live DOM.
+    const fragment = new DOMParser().parseFromString(hit.excerpt,'text/html');
+    for (const node of fragment.body.childNodes) {
+      if (node instanceof HTMLElement && node.tagName === 'MARK') {
+        const mark = document.createElement('mark');
+        mark.textContent = node.textContent;
+        excerpt.append(mark);
+      } else excerpt.append(node.textContent || '');
+    }
+    link.append(label,title,excerpt);
+    link.addEventListener('click', () => track('search_result_clicked', {section}));
+    li.append(link);
+    results.append(li);
+  }
+
+  input.addEventListener('input', () => {
+    window.clearTimeout(timeout);
+    const current = ++revision;
+    const query = input.value.trim();
+    results.replaceChildren();
+    shortcuts.hidden = !!query;
+    status.textContent = query ? status.dataset.loading! : '';
+    if (!query) return;
+    timeout = window.setTimeout(async () => {
+      try {
+        engine ??= (async () => {
+          const module: Engine = await import(/* @vite-ignore */ dialog.dataset.engine!);
+          await module.options({baseUrl:dialog.dataset.base!});
+          await module.init();
+          return module;
+        })().catch(error => { engine = undefined; throw error; });
+        const {results: matches} = await (await engine).search(query);
+        const hits = await Promise.all(matches.slice(0,12).map(match => match.data()));
+        if (current !== revision) return;
+        track('search_performed', {result_count:matches.length});
+        status.textContent = hits.length ? `${status.dataset.count} · ${hits.length}` : status.dataset.none!;
+        hits.forEach(addHit);
+      } catch {
+        if (current !== revision) return;
+        status.textContent = status.dataset.error!;
+        shortcuts.hidden = false;
+      }
+    }, 180);
+  });
+
+  dialog.addEventListener('keydown',event => {
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      dialog.close();
+      return;
+    }
+    const items = [...(shortcuts.hidden ? results : shortcuts).querySelectorAll('a')];
+    if (!items.length) return;
+    const current = items.indexOf(document.activeElement as HTMLAnchorElement);
+    if (event.target === input && event.key === 'Enter') {
+      event.preventDefault();
+      items[0].click();
+    }
+    if (event.key !== 'ArrowDown' && event.key !== 'ArrowUp') return;
+    event.preventDefault();
+    const next = event.key === 'ArrowDown' ? current + 1 : current === -1 ? items.length - 1 : current - 1;
+    (items[next] || input).focus();
+  });
+</script>

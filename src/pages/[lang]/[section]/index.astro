@@ -5,7 +5,8 @@ import PageHeading from '../../../components/PageHeading.astro';
 import Shell from '../../../layouts/Shell.astro';
 import Catalog from '../../../components/Catalog.astro';
 import LabPreview from '../../../components/LabPreview.astro';
-import AboutIntro from '../../../components/AboutIntro.astro';
+import AboutStory from '../../../components/AboutStory.astro';
+import {profile} from '../../../data/profile';
 import Connect from '../../../components/Connect.astro';
 import ConnectPage from '../../../components/ConnectPage.astro';
 import Indicators from '../../../components/Indicators.astro';
@@ -19,16 +20,16 @@ const descriptors = {
   insights:t.pillars.map(p => p[0]).join(' · '), labs:t.labsDesc, intelligence:t.intelDesc, library:t.libraryDesc,
   about:undefined, connect:t.connectDesc, privacy:undefined,
 };
-const headings = {insights:t.nav[0],labs:t.labs,intelligence:t.intelligence,library:t.library,about:t.about,connect:t.connect.join(' '),privacy:t.nav[6]};
+const headings = {insights:t.nav[0],labs:t.labs,intelligence:t.intelligence,library:t.library,about:profile[locale].headline,connect:t.connect.join(' '),privacy:t.nav[6]};
 ---
-<Shell {locale} title={t.nav[i]} description={descriptors[section] || (section === 'about' ? t.bio : t.privacy)} route={section}>
+<Shell {locale} title={t.nav[i]} description={descriptors[section] || (section === 'about' ? profile[locale].introduction : t.privacy)} route={section}>
   {section === 'connect' ? <ConnectPage {locale}/> : <>
   <PageHeading title={headings[section]} description={descriptors[section]} label={headings[section] !== t.nav[i] ? t.nav[i] : undefined}/>
   <div class="wrap page-body">
     {(section === 'insights' || section === 'library') && <Catalog {section} {locale}/>}
     {section === 'labs' && <div class="labs-grid">{labIds.map((_,index) => <LabPreview {locale} {index}/>)}</div>}
     {section === 'intelligence' && <Indicators {locale}/>}
-    {section === 'about' && <><AboutIntro {locale}/><Connect {locale} location="about"/></>}
+    {section === 'about' && <><AboutStory {locale}/><Connect {locale} location="about"/></>}
     {section === 'privacy' && <div class="privacy-copy">
       <p>{t.privacy}</p>
       {measurementId() ? <>

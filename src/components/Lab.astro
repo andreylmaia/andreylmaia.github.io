@@ -1,4 +1,5 @@
 ---
+import LabShare from './LabShare.astro';
 import TimeValue from './TimeValue';
 import {labCopy} from '../lib/lab-copy';
 import {accountTypes,scenarios} from '../lib/finance';
@@ -29,12 +30,14 @@ const fields = [
         <dl class="metrics"><div><dt>{t.available}</dt><dd data-money="available"></dd></div><div><dt>{t.blocked}</dt><dd data-money="blocked"></dd></div></dl>
         <div class="table-wrap"><table class="financial-table"><thead><tr><th>{t.account}</th><th>{t.classification}</th><th>{t.balance}</th></tr></thead><tbody>{Object.entries(accountTypes).map(([account,type]) => <tr><th scope="row">{t.names[account as keyof typeof t.names]}</th><td>{t.types[type as keyof typeof t.types]}</td><td data-money={account}></td></tr>)}</tbody></table></div>
       </section>
-      <section class="tool-panel"><h2>{t.journal}</h2><p data-journal-empty>{t.empty}</p><p role="status" data-ledger-status></p><div class="table-wrap" data-journal-wrap hidden><table class="financial-table"><thead><tr><th>{t.scenario}</th><th>{t.account}</th><th>{t.sides.debit}</th><th>{t.sides.credit}</th></tr></thead><tbody data-journal></tbody></table></div></section>
+      <section class="tool-panel"><h2>{t.journal}</h2><p data-journal-empty>{t.empty}</p><p data-last-applied hidden></p><p role="status" data-ledger-status></p><div class="table-wrap" data-journal-wrap hidden><table class="financial-table"><thead><tr><th>{t.scenario}</th><th>{t.account}</th><th>{t.sides.debit}</th><th>{t.sides.credit}</th></tr></thead><tbody data-journal></tbody></table></div></section>
     </> : <section class="tool-panel"><h2>{t.outcome}</h2><dl class="metrics">{t.unitResults.map((label,i) => <div><dt>{label}</dt><dd data-result={i}>—</dd></div>)}</dl>
     </section>}
   </div>
 </section>}
+<LabShare {locale} {index}/>
 <script>
+  import {restoreLabInputs,shareFields} from '../lib/lab-sharing';
   import {trackLabUse} from '../lib/analytics';
   import {initialLedger,isBalanced,post,scenarios,unitEconomics} from '../lib/finance';
   import {labCopy} from '../lib/lab-copy';
@@ -56,7 +59,10 @@ const fields = [
       let state = initialLedger();
       const table = root.querySelector<HTMLElement>('[data-journal]')!;
       const status = root.querySelector<HTMLElement>('[data-ledger-status]')!;
+      const lastApplied = root.querySelector<HTMLElement>('[data-last-applied]')!;
       function render() {
+        const last = state.journal.at(-1);
+        lastApplied.textContent = last ? t.scenarios[scenarios.indexOf(last.scenario)] + ' · ' + money.format(last.cents / 100) : '';
         const values: Record<string,number> = {...state.balances,available:state.balances.customer-state.held,blocked:state.held};
         root.querySelectorAll<HTMLElement>('[data-money]').forEach(node => node.textContent = money.format(values[node.dataset.money!]/100));
         table.replaceChildren();
@@ -102,6 +108,7 @@ const fields = [
       render();
     } else {
       const inputs = [...form.querySelectorAll('input')];
+      restoreLabInputs(form,shareFields['unit-economics']);
       const results = [...root.querySelectorAll<HTMLElement>('[data-result]')];
       function render(interaction = false) {
         const values = Object.fromEntries(inputs.map(input => [input.name,input.valueAsNumber]));

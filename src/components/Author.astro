@@ -1,0 +1,29 @@
+---
+import ProfilePortrait from './ProfilePortrait.astro';
+import {profile} from '../data/profile';
+import {brand,copy,url,type Locale} from '../lib/site';
+interface Props {
+  locale: Locale;
+  variant?: 'signature' | 'compact' | 'bio';
+  date?: {value:string; label:string};
+}
+const {locale,variant = 'compact',date} = Astro.props;
+const p = profile[locale];
+---
+<div data-pagefind-ignore={variant !== 'signature' ? true : undefined} class:list={['author', 'author-' + variant]}>
+  <ProfilePortrait {locale} decorative/>
+  <div>
+    {variant === 'bio' ? <>
+      <strong>{brand.name}</strong>
+      <p>{p.bio}</p>
+      <div class="actions">
+        <a class="text-link" href={url(locale,'about')} data-analytics-action="author_profile_clicked" data-cta-location="bio">{copy[locale].nav[4]}</a>
+        <a class="text-link" href={brand.linkedin} data-analytics-action="linkedin_clicked" data-cta-location="bio">LinkedIn</a>
+      </div>
+    </> : <>
+      <a href={url(locale,'about')} data-analytics-action="author_profile_clicked" data-cta-location={variant}>{variant === 'signature' ? p.hello : brand.name}</a>
+      {variant === 'signature' && <span>{p.origin}</span>}
+      {date && <time datetime={date.value}>{date.label}</time>}
+    </>}
+  </div>
+</div>

@@ -5,7 +5,7 @@ import Icon from './Icon.astro';
 const {locale,location} = Astro.props as {locale:Locale;location:ConversationLocation};
 const t = copy[locale];
 ---
-<section class="connect-band">
+<section class="connect-band" data-pagefind-ignore>
   <div>
     <h2>{t.connect[0]} <span>{t.connect[1]}</span></h2>
     <p>{t.connectDesc}</p>

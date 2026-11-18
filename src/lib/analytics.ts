@@ -7,12 +7,18 @@ type Events = {
   article_view: Content;
   article_completed: Content;
   article_shared: Content & {share_method: 'copy' | 'native' | 'email'};
+  search_opened: Record<string, never>;
+  search_performed: {result_count:number};
+  search_result_clicked: {section:string};
+  author_profile_clicked: {cta_location:'signature' | 'compact' | 'bio'};
+  lab_result_shared: {lab_id:LabId; share_method:'copy' | 'native' | 'url'};
+  lab_result_exported: {lab_id:LabId};
   lab_opened: {lab_id: LabId};
   lab_used: {lab_id: LabId};
   resource_clicked: Content;
   language_changed: {target_language: Locale};
   theme_changed: {theme: 'light' | 'dark'};
-  linkedin_clicked: {cta_location: 'footer' | 'connect'};
+  linkedin_clicked: {cta_location: 'footer' | 'connect' | 'bio'};
   email_clicked: {cta_location: 'footer' | 'connect' | 'composer'};
   conversation_started: {cta_location: ConversationLocation | 'composer'};
 };
@@ -203,7 +209,10 @@ export function initializeAnalytics(root: HTMLElement) {
     if (analyticsAction === 'resource_clicked' && contentId && category) {
       track('resource_clicked', {content_id:contentId, category});
     }
-    if (analyticsAction === 'linkedin_clicked' && (ctaLocation === 'footer' || ctaLocation === 'connect')) {
+    if (analyticsAction === 'author_profile_clicked' && (ctaLocation === 'signature' || ctaLocation === 'compact' || ctaLocation === 'bio')) {
+      track('author_profile_clicked', {cta_location:ctaLocation});
+    }
+    if (analyticsAction === 'linkedin_clicked' && (ctaLocation === 'footer' || ctaLocation === 'connect' || ctaLocation === 'bio')) {
       track('linkedin_clicked', {cta_location:ctaLocation});
     }
     if (analyticsAction === 'email_clicked' && (ctaLocation === 'footer' || ctaLocation === 'connect')) {

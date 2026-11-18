@@ -1,4 +1,6 @@
 ---
+import Author from '../../components/Author.astro';
+import {employers,profile} from '../../data/profile';
 import Shell from '../../layouts/Shell.astro';
 import Icon from '../../components/Icon.astro';
 import PaymentArt from '../../components/PaymentArt.astro';
@@ -22,7 +24,7 @@ const schema = {'@type':'Person', name:brand.name, url:new URL(url(locale),Astro
   <section class="hero">
     <div class="wrap hero-grid">
       <div class="hero-copy">
-        <div class="eyebrow region"><span></span>{t.region}</div>
+        <Author {locale} variant="signature"/>
         <h1>{t.hero.map((line,i) => <span class:list={[i === 2 && 'accent']}>{line}</span>)}</h1>
         <p class="position">{t.position}</p>
         <p class="intro">{t.intro}</p>
@@ -31,6 +33,7 @@ const schema = {'@type':'Person', name:brand.name, url:new URL(url(locale),Astro
       <PaymentArt {locale}/>
     </div>
   </section>
+  <section class="wrap professional-strip"><h2>{profile[locale].journey}</h2><ul>{employers.map(name => <li>{name}</li>)}</ul></section>
   <section class="wrap section perspectives">
     <div class="section-head"><div><div class="eyebrow">{t.nav[0]}</div><h2>{t.perspectives}</h2></div></div>
     <div class="pillar-grid">

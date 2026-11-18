@@ -1,7 +1,7 @@
 import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 import { glob } from 'astro/loaders';
-import { pillars } from './lib/site';
+import { labIds, pillars } from './lib/site';
 
 export const resourceTypes = ['books','tools','articles','research','frameworks','podcasts','people','resources'] as const;
 const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
@@ -14,7 +14,7 @@ const common = {
 export const collections = {
   insights: defineCollection({
     loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/insights', generateId: ({entry}) => entry }),
-    schema: z.object({ ...common, category: z.enum(pillars), publishedAt: z.coerce.date(), updatedAt: z.coerce.date().optional() }),
+    schema: z.object({ ...common, category: z.enum(pillars), relatedLabs: z.array(z.enum(labIds)).default([]), publishedAt: z.coerce.date(), updatedAt: z.coerce.date().optional() }),
   }),
   library: defineCollection({
     loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/library', generateId: ({entry}) => entry }),

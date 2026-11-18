@@ -19,13 +19,14 @@ The development server prints its local URL. English lives at `/en/` and Brazili
 
 ## Publish
 
-In the repository’s **Settings → Pages**, choose **GitHub Actions** as the source. Push to the default branch to validate content, check types, test the financial models, build and deploy. Pull requests run the checks and build.
+In the repository’s **Settings → Pages**, choose **GitHub Actions** as the source. Push to the default branch to validate content, check types, test the financial models, build and deploy. Pull requests run the checks and build. The build generates social cards, then writes the Pagefind index into `dist/` alongside the public routes. Use the production preview to exercise global search.
 
 The workflow uses the GitHub Pages origin and base path. For local builds, set `SITE_URL` to an absolute origin and `SITE_BASE` to the mount path, such as `/repo`. Configure a custom domain in GitHub Pages and its DNS first. Repository variables with those names can override discovery if needed. Leave the base at `/` for a domain hosted at its root.
 
 ## Maintain
 
 - Edit the name, portrait path and dimensions, contact links and bilingual copy in `src/lib/site.ts`. Put local public images in `public/`.
+- Edit the bilingual professional story in `src/data/profile.ts` and the current activities and date in `src/data/now.json`.
 - See [Content guide](docs/CONTENT_GUIDE.md) for articles, translations and recommendations.
 - See [Architecture](docs/ARCHITECTURE.md) for a new Lab and optional analytics.
 - See [Design system](docs/DESIGN_SYSTEM.md) for tokens and components.
@@ -47,12 +48,16 @@ Standard GA4 reports cover acquisition, visitors, sessions, devices, geography a
 | Report | Events | Useful dimensions |
 | --- | --- | --- |
 | Article engagement | `article_view`, `article_completed`, `article_shared` | `content_id`, `category`, `site_language`, `share_method` |
-| Lab engagement | `lab_opened`, `lab_used` | `lab_id`, `site_language` |
+| Lab engagement | `lab_opened`, `lab_used`, `lab_result_shared`, `lab_result_exported` | `lab_id`, `site_language`, `share_method` |
+| Search | `search_opened`, `search_performed`, `search_result_clicked` | `site_language`, `result_count`, `section` |
+| Author identity | `author_profile_clicked`, `linkedin_clicked` | `cta_location`, `site_language` |
 | Resource interest | `resource_clicked` | `content_id`, `category`, `site_language` |
 | Display preferences | `language_changed`, `theme_changed` | `site_language`, `target_language`, `theme` |
 | Contact intent | `conversation_started`, `linkedin_clicked`, `email_clicked` | `cta_location`, `site_language` |
 
 Article completion requires reaching the end and spending at least 30 foreground seconds on the page with consent. Lab use is counted once per Lab per page after a valid interaction. Shares are counted after clipboard or native sharing succeeds, or when the email share link is opened. Contact events count intent. The same composer action can record both a generic conversation start and an email click. Use them as separate metrics.
+
+Lab result actions run in the browser. Simulation links are created only when requested and store allowlisted illustrative values in the URL fragment. Ledger shares summarize the current result and most recent transaction. Analytics receive Lab identifiers and action types, without simulation values or search terms.
 
 ### LinkedIn campaign links
 

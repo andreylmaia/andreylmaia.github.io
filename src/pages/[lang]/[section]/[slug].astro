@@ -1,7 +1,8 @@
 ---
 import {render} from 'astro:content';
 import 'katex/dist/katex.min.css';
-import ProfilePortrait from '../../../components/ProfilePortrait.astro';
+import Author from '../../../components/Author.astro';
+import LabPreview from '../../../components/LabPreview.astro';
 import PageHeading from '../../../components/PageHeading.astro';
 import Shell from '../../../layouts/Shell.astro';
 import Connect from '../../../components/Connect.astro';
@@ -43,39 +44,62 @@ const title = d?.title || t.tools[toolIndex][0];
 const description = d?.description || t.tools[toolIndex][1];
 const route = section + '/' + Astro.params.slug;
 const canonical = new URL(url(locale,route),Astro.site);
+const socialImage = article || toolIndex >= 0 ? `${locale}/social/${route}.png` : d?.coverImage;
 const emailShare = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(canonical.href)}`;
-const schema = article ? {'@type':'Article',headline:title,description,datePublished:article.publishedAt.toISOString(),dateModified:article.updatedAt?.toISOString() || article.publishedAt.toISOString(),author:{'@type':'Person',name:brand.name,url:new URL(url(locale,'about'),Astro.site).href,sameAs:[brand.github,brand.linkedin].filter(Boolean),image:new URL(asset(brand.portrait.src),Astro.site).href},image:new URL(asset(d?.coverImage || (pt ? 'social-pt.png' : 'social.png')),Astro.site).href,mainEntityOfPage:new URL(url(locale,route),Astro.site).href,inLanguage:pt?'pt-BR':'en'} : undefined;
+const schema = article ? {'@type':'Article',headline:title,description,datePublished:article.publishedAt.toISOString(),dateModified:article.updatedAt?.toISOString() || article.publishedAt.toISOString(),author:{'@type':'Person',name:brand.name,url:new URL(url(locale,'about'),Astro.site).href,sameAs:[brand.github,brand.linkedin].filter(Boolean),image:new URL(asset(brand.portrait.src),Astro.site).href},image:new URL(asset(socialImage!),Astro.site).href,mainEntityOfPage:new URL(url(locale,route),Astro.site).href,inLanguage:pt?'pt-BR':'en'} : undefined;
 ---
-<Shell {locale} {title} {description} {route} {alternate} {switchUrl} {schema} image={d?.coverImage}>
+<Shell {locale} {title} {description} {route} {alternate} {switchUrl} {schema} image={socialImage}>
   <PageHeading {title} {description} label={entry ? category(entry) : t.nav[1]} back={url(locale,section)}>
-    {article && entry && <div class="meta byline"><ProfilePortrait {locale} class="author-portrait"/><a href={url(locale,'about')}>{brand.name}</a><span>·</span><time datetime={article.publishedAt.toISOString()}>{formattedDate(entry)}</time><span>·</span><span>{readingTime(entry)} {t.min}</span></div>}
+    {article && entry && <div class="meta byline" data-pagefind-ignore><Author {locale} date={{value:article.publishedAt.toISOString(),label:formattedDate(entry)}}/><span>·</span><span>{readingTime(entry)} {t.min}</span></div>}
     {resource && <div class="meta">{resource.creator}</div>}
     {d && d.tags.length > 0 && <div class="tag-list">{d.tags.map(tag => <a class="tag" href={url(locale,section) + '?tag=' + encodeURIComponent(tag)}>{tag}</a>)}</div>}
   </PageHeading>
+  {article && <div class="reading-progress" aria-hidden="true" hidden></div>}
   <div class="wrap page-body">
     {d?.coverImage && <img class="article-cover" src={asset(d.coverImage)} alt="" width="800" height="450" decoding="async"/>}
     {Content && <div class="article-grid">
       <div class="article-body" data-analytics-article={article?.id} data-category={article?.category}>{resource?.commentary && <p>{resource.commentary}</p>}<Content/>{article && <div class="article-end" data-article-end aria-hidden="true"></div>}{resource && <a class="button secondary" href={resource.externalUrl} data-analytics-action="resource_clicked" data-content-id={resource.id} data-category={resource.category}>{pt?'Abrir recurso':'Open resource'} <Icon name="diagonal" size={15}/></a>}</div>
-      {toc && <nav class="toc" aria-label={t.contents}><strong>{t.contents}</strong><ul>{headings.map(h => <li><a href={'#' + h.slug}>{h.text}</a></li>)}</ul></nav>}
+      {toc && <nav data-pagefind-ignore class="toc" aria-label={t.contents}><strong>{t.contents}</strong><ul>{headings.map(h => <li><a href={'#' + h.slug}>{h.text}</a></li>)}</ul></nav>}
     </div>}
-    {entry && <div class="actions share" hidden data-share data-copied={t.copied} data-failed={t.copyFailed}>
+    {entry && <div class="actions share" data-pagefind-ignore hidden data-share data-copied={t.copied} data-failed={t.copyFailed}>
       <a class="button secondary" data-native-share href={emailShare}>{t.share}</a>
       <button type="button" class="button secondary" data-copy-link>{t.copy}</button><span role="status"></span>
     </div>}
-    {related.length > 0 && <section class="related"><h2>{section === 'library' ? (pt?'Recursos relacionados':'Related resources') : t.related}</h2><div class="editorial-grid">{related.map(item => <EditorialCard entry={item} category={category(item)}/>)}</div></section>}
-    {article && <Connect {locale} location="article"/>}
+    {related.length > 0 && <section class="related" data-pagefind-ignore><h2>{section === 'library' ? (pt?'Recursos relacionados':'Related resources') : t.related}</h2><div class="editorial-grid">{related.map(item => <EditorialCard entry={item} category={category(item)}/>)}</div></section>}
+    {article && <div data-pagefind-ignore>
+      <Author {locale} variant="bio"/>
+      {!!article.relatedLabs.length && <section class="related"><h2>{pt ? 'Labs relacionados' : 'Related Labs'}</h2><div class="labs-grid">{article.relatedLabs.map(id => <LabPreview {locale} index={labIds.indexOf(id)}/>)}</div></section>}
+      <Connect {locale} location="article"/>
+    </div>}
     {toolIndex >= 0 && <div data-analytics-lab={labIds[toolIndex]}><Lab {locale} index={toolIndex}/></div>}
   </div>
 </Shell>
 <script>
   import {trackArticleShare} from '../../../lib/analytics';
+  const progress = document.querySelector<HTMLElement>('.reading-progress');
+  const body = document.querySelector<HTMLElement>('[data-analytics-article]');
+  if (progress && body) {
+    const update = () => {
+      const box = body.getBoundingClientRect();
+      const start = innerHeight * .75;
+      const distance = Math.max(1,box.height + start - innerHeight * .2);
+      const fraction = Math.max(0,Math.min(1,(start - box.top) / distance));
+      progress.style.transform = `scaleX(${fraction})`;
+    };
+    const refresh = () => requestAnimationFrame(update);
+    window.addEventListener('scroll',refresh,{passive:true});
+    window.addEventListener('resize',refresh);
+    progress.hidden = false;
+    update();
+  }
   const actions = document.querySelector<HTMLElement>('[data-share]');
   if (actions) {
+    const url = document.querySelector<HTMLLinkElement>('link[rel=canonical]')?.href || location.href;
     actions.hidden = false;
     const status = actions.querySelector<HTMLElement>('[role=status]')!;
     actions.querySelector('[data-copy-link]')?.addEventListener('click', async () => {
       try {
-        await navigator.clipboard.writeText(location.href);
+        await navigator.clipboard.writeText(url);
         trackArticleShare('copy');
         status.textContent = actions.dataset.copied || '';
       } catch { status.textContent = actions.dataset.failed || ''; }
@@ -86,7 +110,7 @@ const schema = article ? {'@type':'Article',headline:title,description,datePubli
         return;
       }
       event.preventDefault();
-      void navigator.share({title:document.title,url:location.href})
+      void navigator.share({title:document.title,url})
         .then(() => trackArticleShare('native')).catch(() => {});
     });
   }

@@ -1,0 +1,24 @@
+---
+import {copy,labIds,type Locale} from '../lib/site';
+import {labCopy} from '../lib/lab-copy';
+const {index,locale} = Astro.props as {index:number;locale:Locale};
+const pt = locale === 'pt';
+const t = copy[locale];
+const notes = [labCopy[locale].simulation,labCopy[locale].unitNote,labCopy[locale].timeNote];
+const illustration = pt ? 'Cenário ilustrativo.' : 'Illustrative scenario.';
+---
+<section class="tool-panel lab-share" hidden data-pagefind-ignore data-share-lab={labIds[index]} data-title={t.tools[index][0]} data-note={illustration + ' ' + notes[index]} data-done={pt ? 'Concluído.' : 'Done.'} data-failed={pt ? 'Não foi possível compartilhar ou exportar.' : 'Could not share or export.'} data-invalid={pt ? 'Gere um resultado válido primeiro.' : 'Generate a valid result first.'}>
+  <h2>{pt ? 'Compartilhar resultado' : 'Share result'}</h2>
+  {index !== 0 && <p class="tool-note">{pt ? 'O link inclui os valores da simulação. Use valores ilustrativos.' : 'The link includes your simulation values. Use illustrative values.'}</p>}
+  <div class="actions">
+    <button class="button secondary" type="button" data-result-action="copy">{pt ? 'Copiar resumo' : 'Copy summary'}</button>
+    <button class="button secondary" type="button" data-result-action="native" hidden>{t.share}</button>
+    <button class="button secondary" type="button" data-result-action="png">{pt ? 'Baixar PNG' : 'Download PNG'}</button>
+    {index !== 0 && <button class="button secondary" type="button" data-result-action="url">{pt ? 'Copiar link da simulação' : 'Copy simulation link'}</button>}
+  </div>
+  <p class="meta" role="status"></p>
+</section>
+<script>
+  import {bindLabSharing} from '../lib/lab-sharing';
+  for (const root of document.querySelectorAll<HTMLElement>('[data-share-lab]')) bindLabSharing(root);
+</script>

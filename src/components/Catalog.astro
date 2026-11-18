@@ -12,7 +12,7 @@ const tags = [...new Set(items.flatMap(item => item.data.tags))].sort((a,b) => a
 const featured = items.find(item => item.data.featured);
 const ordered = featured ? [featured,...items.filter(item => item !== featured)] : items;
 ---
-<div data-catalog data-lang={locale}>
+<div data-pagefind-ignore data-catalog data-lang={locale}>
   <p class="notice" role="status" data-translation hidden>{t.translation}</p>
   <form class="filters" role="search" hidden>
     <label>{t.search}<input type="search" name="q"/></label>

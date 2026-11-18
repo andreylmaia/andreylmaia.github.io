@@ -6,3 +6,4 @@
 - Keep editorial entries in Git and drafts private. Publish only approved writing and recommendations.
 - Keep illustrative financial scenarios clearly labeled. Intelligence requires verifiable source metadata.
 - Document changes to the publishing workflow or design system in the appropriate guide.
+- Build the Pagefind index as part of `npm run build`. Keep search limited to approved public routes and verify both languages using the production preview.

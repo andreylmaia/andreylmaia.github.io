@@ -4,9 +4,10 @@ import {asset,brand,copy,type Locale} from '../lib/site';
 interface Props {
   locale: Locale;
   class?: string;
+  decorative?: boolean;
 }
 
-const {locale,class:className} = Astro.props;
+const {locale,class:className,decorative} = Astro.props;
 const portrait = brand.portrait;
 ---
-{portrait && <img class:list={['profile-portrait',className]} src={asset(portrait.src)} alt={copy[locale].portraitAlt} width={portrait.width} height={portrait.height} loading="lazy" decoding="async"/>}
+{portrait && <img class:list={['profile-portrait',className]} src={asset(portrait.src)} alt={decorative ? '' : copy[locale].portraitAlt} width={portrait.width} height={portrait.height} loading="lazy" decoding="async"/>}

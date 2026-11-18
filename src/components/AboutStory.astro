@@ -1,0 +1,41 @@
+---
+import {education,employers,platformMetrics,profile} from '../data/profile';
+import now from '../data/now.json';
+import {language,type Locale} from '../lib/site';
+import ProfilePortrait from './ProfilePortrait.astro';
+const {locale} = Astro.props as {locale:Locale};
+const p = profile[locale];
+const updated = new Intl.DateTimeFormat(language(locale),{dateStyle:'long',timeZone:'UTC'}).format(new Date(now.updated));
+---
+<div class="about-story">
+  <div class="about-intro story-intro"><ProfilePortrait {locale}/><p>{p.introduction}</p></div>
+  <section>
+    <h2>{p.experience}</h2>
+    <ol class="career-timeline">
+      {p.career.map(([role,period,detail],i) => <li>
+        <p class="meta">{period}</p>
+        <h3>{i === 2 ? 'DiDi Chuxing' : employers[i] ?? p.university}</h3>
+        <strong>{role}</strong><p>{detail}</p>
+      </li>)}
+    </ol>
+  </section>
+  <section>
+    <h2>{p.highlights}</h2>
+    <p>{p.scale}</p>
+    <dl class="profile-metrics">{platformMetrics.map((number,i) => <div><dt>{p.metrics[i]}</dt><dd>{number}</dd></div>)}</dl>
+  </section>
+  <section>
+    <h2>{p.education}</h2>
+    <ul class="education-list">{education.map(({name,period},i) => <li><h3>{name === 'UFPA' ? p.university + ' — ' + name : name}</h3><p>{p.degrees[i]} · {period}</p></li>)}</ul>
+  </section>
+  <section>
+    <h2>{p.interestTitle}</h2>
+    <ul class="tag-list profile-tags">{p.interests.map(interest => <li class="tag">{interest}</li>)}</ul>
+  </section>
+  <section><h2>{p.personal}</h2><p>{p.personalText}</p></section>
+  <section>
+    <h2>{p.now}</h2>
+    <dl class="now-list">{now[locale].map(([activity,description]) => <div><dt>{activity}</dt><dd>{description}</dd></div>)}</dl>
+    <p class="meta">{p.updated} <time datetime={now.updated}>{updated}</time></p>
+  </section>
+</div>
