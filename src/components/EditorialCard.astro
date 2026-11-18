@@ -1,0 +1,17 @@
+---
+import {formattedDate, readingTime, type Entry} from '../lib/editorial';
+import {asset, copy, url} from '../lib/site';
+import Icon from './Icon.astro';
+const {entry, category, featured = false} = Astro.props as {entry: Entry; category:string; featured?:boolean};
+const d = entry.data;
+const link = url(d.locale, `${entry.collection}/${d.slug}`);
+---
+<article class:list={['editorial-card',featured && 'featured']}>
+  {d.coverImage && <a href={link} tabindex="-1" aria-hidden="true"><img src={asset(d.coverImage)} alt="" loading="lazy" decoding="async" width="640" height="360"/></a>}
+  <div class="editorial-body">
+    <div class="eyebrow">{category}</div>
+    <h3><a href={link}>{d.title} <Icon name="diagonal" size={17}/></a></h3>
+    <p>{d.description}</p>
+    <div class="meta">{'publishedAt' in d ? <><time datetime={d.publishedAt.toISOString()}>{formattedDate(entry)}</time><span>·</span><span>{readingTime(entry)} {copy[d.locale].min}</span></> : 'creator' in d && d.creator}</div>
+  </div>
+</article>

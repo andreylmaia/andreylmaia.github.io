@@ -1,0 +1,118 @@
+---
+import TimeValue from './TimeValue';
+import {labCopy} from '../lib/lab-copy';
+import {accountTypes,scenarios} from '../lib/finance';
+import type {Locale} from '../lib/site';
+const {locale,index} = Astro.props as {locale:Locale;index:number};
+const t = labCopy[locale];
+const fields = [
+  ['volume',10000,0,1,1e9],['average',100,0,.01,1e9],['rate',1.5,0,.01,100],['fee',.3,0,.01,1e9],['processing',.8,0,.01,100],['fixed',5000,0,.01,1e9],
+] as const;
+---
+<noscript><p class="empty">{t.js}</p></noscript>
+{index === 2 ? <TimeValue {locale} client:load/> : <section class="tool-layout" data-lab={index} data-locale={locale} hidden>
+  <div class="tool-panel">
+    <h2>{t.controls}</h2>
+    <form class="tool-fields" novalidate>
+      {index === 0 ? <>
+        <label>{t.scenario}<select name="scenario">{scenarios.map((scenario,i) => <option value={scenario}>{t.scenarios[i]}</option>)}</select></label>
+        <label>{t.amount}<input name="amount" type="number" min=".01" max="1000000000" step=".01" value="100" required/></label>
+        <div class="actions"><button class="button primary" type="submit">{t.apply}</button><button class="button secondary" type="reset">{t.reset}</button></div>
+      </> : fields.map(([name,value,min,step,max],i) => <label>{t.unitFields[i]}<input {name} type="number" {value} {min} {step} {max} required/></label>)}
+      <p class="tool-error" role="status" data-error hidden></p>
+    </form>
+    <p class="tool-note">{index === 0 ? t.simulation : t.unitNote}</p>
+  </div>
+  <div class="tool-results">
+    {index === 0 ? <>
+      <section class="tool-panel"><h2>{t.accounts}</h2>
+        <dl class="metrics"><div><dt>{t.available}</dt><dd data-money="available"></dd></div><div><dt>{t.blocked}</dt><dd data-money="blocked"></dd></div></dl>
+        <div class="table-wrap"><table class="financial-table"><thead><tr><th>{t.account}</th><th>{t.classification}</th><th>{t.balance}</th></tr></thead><tbody>{Object.entries(accountTypes).map(([account,type]) => <tr><th scope="row">{t.names[account as keyof typeof t.names]}</th><td>{t.types[type as keyof typeof t.types]}</td><td data-money={account}></td></tr>)}</tbody></table></div>
+      </section>
+      <section class="tool-panel"><h2>{t.journal}</h2><p data-journal-empty>{t.empty}</p><p role="status" data-ledger-status></p><div class="table-wrap" data-journal-wrap hidden><table class="financial-table"><thead><tr><th>{t.scenario}</th><th>{t.account}</th><th>{t.sides.debit}</th><th>{t.sides.credit}</th></tr></thead><tbody data-journal></tbody></table></div></section>
+    </> : <section class="tool-panel"><h2>{t.outcome}</h2><dl class="metrics">{t.unitResults.map((label,i) => <div><dt>{label}</dt><dd data-result={i}>—</dd></div>)}</dl>
+    </section>}
+  </div>
+</section>}
+<script>
+  import {initialLedger,isBalanced,post,scenarios,unitEconomics} from '../lib/finance';
+  import {labCopy} from '../lib/lab-copy';
+  import {language,type Locale} from '../lib/site';
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-lab]')) {
+    const index = Number(root.dataset.lab);
+    const locale = root.dataset.locale as Locale;
+    const t = labCopy[locale];
+    const money = new Intl.NumberFormat(language(locale),{style:'currency',currency:'BRL'});
+    const integer = new Intl.NumberFormat(language(locale));
+    const form = root.querySelector('form')!;
+    const error = root.querySelector<HTMLElement>('[data-error]')!;
+    function issue(message = '') {
+      error.textContent = message;
+      error.hidden = !message;
+    }
+    if (index === 0) {
+      let state = initialLedger();
+      const table = root.querySelector<HTMLElement>('[data-journal]')!;
+      const status = root.querySelector<HTMLElement>('[data-ledger-status]')!;
+      function render() {
+        const values: Record<string,number> = {...state.balances,available:state.balances.customer-state.held,blocked:state.held};
+        root.querySelectorAll<HTMLElement>('[data-money]').forEach(node => node.textContent = money.format(values[node.dataset.money!]/100));
+        table.replaceChildren();
+        function row(cells: string[]) {
+          const tr = document.createElement('tr');
+          for (const content of cells) {
+            const td = document.createElement('td');
+            td.textContent = content;
+            tr.append(td);
+          }
+          table.append(tr);
+          return tr;
+        }
+        for (const item of [...state.journal].reverse()) {
+          const scenario = t.scenarios[scenarios.indexOf(item.scenario)];
+          if (!item.postings.length) {
+            const tr = row([scenario + ' · ' + money.format(item.cents/100),t.reservation]);
+            (tr.lastElementChild as HTMLTableCellElement).colSpan = 3;
+            continue;
+          }
+          item.postings.forEach(({account,side,cents},i) => {
+            row([i ? '' : scenario,t.names[account],side === 'debit' ? money.format(cents/100) : '',side === 'credit' ? money.format(cents/100) : '']);
+          });
+        }
+        root.querySelector<HTMLElement>('[data-journal-empty]')!.hidden = !!state.journal.length;
+        root.querySelector<HTMLElement>('[data-journal-wrap]')!.hidden = !state.journal.length;
+      }
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        const amount = form.elements.namedItem('amount') as HTMLInputElement;
+        if (!amount.validity.valid) return issue(t.errors.amount);
+        const scenario = (form.elements.namedItem('scenario') as HTMLSelectElement).value;
+        const result = post(state,scenario,Math.round(amount.valueAsNumber * 100));
+        if (!result.state) return issue(t.errors[result.error]);
+        state = result.state;
+        issue();
+        render();
+        const item = state.journal.at(-1)!;
+        status.textContent = !item.postings.length ? t.reservation : isBalanced(item.postings) ? t.balanced + (['deposit','payment','refund'].includes(scenario) ? ' · ' + t.external : '') : t.errors.balance;
+      });
+      form.addEventListener('reset', () => {state = initialLedger(); issue(); status.textContent = ''; render();});
+      render();
+    } else {
+      const inputs = [...form.querySelectorAll('input')];
+      const results = [...root.querySelectorAll<HTMLElement>('[data-result]')];
+      function render() {
+        const values = Object.fromEntries(inputs.map(input => [input.name,input.valueAsNumber]));
+        const valid = inputs.every(input => input.validity.valid);
+        const unit = valid ? unitEconomics(values as Parameters<typeof unitEconomics>[0]) : null;
+        issue(unit ? '' : t.errors.inputs);
+        const output = unit ? [money.format(unit.revenue),money.format(unit.costs),money.format(unit.margin),money.format(unit.profit),unit.breakEven === null ? t.noBreak : integer.format(unit.breakEven)] : [];
+        results.forEach((node,i) => node.textContent = output[i] || '—');
+      }
+      form.addEventListener('input',render);
+      form.addEventListener('submit',event => event.preventDefault());
+      render();
+    }
+    root.hidden = false;
+  }
+</script>

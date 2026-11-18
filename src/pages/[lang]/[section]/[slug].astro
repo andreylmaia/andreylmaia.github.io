@@ -1,0 +1,87 @@
+---
+import {render} from 'astro:content';
+import 'katex/dist/katex.min.css';
+import PageHeading from '../../../components/PageHeading.astro';
+import Shell from '../../../layouts/Shell.astro';
+import Connect from '../../../components/Connect.astro';
+import EditorialCard from '../../../components/EditorialCard.astro';
+import Icon from '../../../components/Icon.astro';
+import Lab from '../../../components/Lab.astro';
+import {entries,formattedDate,readingTime,resourceLabel,type Entry,type EditorialSection} from '../../../lib/editorial';
+import {asset,brand,copy,labIds,locales,other,pillars,url,type Locale} from '../../../lib/site';
+
+export async function getStaticPaths() {
+  const editorial = await Promise.all((['insights','library'] as const).map(async section => {
+    const collection = await entries(section);
+    return collection.map(entry => ({
+      params:{lang:entry.data.locale,section,slug:entry.data.slug},
+      props:{entry,collection,toolIndex:-1},
+    }));
+  }));
+  const tools = locales.flatMap(lang => labIds.map((slug,toolIndex) => ({params:{lang,section:'labs',slug},props:{entry:null,collection:[],toolIndex}})));
+  return [...editorial.flat(),...tools];
+}
+const locale = Astro.params.lang as Locale;
+const t = copy[locale];
+const pt = locale === 'pt';
+const section = Astro.params.section as EditorialSection|'labs';
+const {entry,collection,toolIndex} = Astro.props as {entry:Entry|null;collection:Entry[];toolIndex:number};
+const d = entry?.data;
+const article = d && 'publishedAt' in d ? d : null;
+const resource = d && 'creator' in d ? d : null;
+const content = entry ? await render(entry) : null;
+const Content = content?.Content;
+const translation = d && collection.find(item => item.data.id === d.id && item.data.locale === other(locale));
+const alternate = d ? (translation ? url(other(locale),section + '/' + translation.data.slug) : null) : undefined;
+const switchUrl = d && !translation ? url(other(locale),section) + '?translation=missing' : undefined;
+const category = (item:Entry) => item.collection === 'insights' ? t.pillars[pillars.indexOf(item.data.category as typeof pillars[number])][0] : resourceLabel(locale,item.data.category);
+const related = d ? collection.filter(item => item.id !== entry?.id && item.data.locale === locale && (item.data.category === d.category || item.data.tags.some(tag => d.tags.includes(tag)))).slice(0,3) : [];
+const headings = content?.headings.filter(item => item.depth === 2 || item.depth === 3) || [];
+const toc = headings.length >= 3;
+const title = d?.title || t.tools[toolIndex][0];
+const description = d?.description || t.tools[toolIndex][1];
+const route = section + '/' + Astro.params.slug;
+const canonical = new URL(url(locale,route),Astro.site);
+const emailShare = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(canonical.href)}`;
+const schema = article ? {'@type':'Article',headline:title,description,datePublished:article.publishedAt.toISOString(),dateModified:article.updatedAt?.toISOString() || article.publishedAt.toISOString(),author:{'@type':'Person',name:brand.name,url:new URL(url(locale,'about'),Astro.site).href},image:new URL(asset(d?.coverImage || (pt ? 'social-pt.png' : 'social.png')),Astro.site).href,mainEntityOfPage:new URL(url(locale,route),Astro.site).href,inLanguage:pt?'pt-BR':'en'} : undefined;
+---
+<Shell {locale} {title} {description} {route} {alternate} {switchUrl} {schema} image={d?.coverImage}>
+  <PageHeading {title} {description} label={entry ? category(entry) : t.nav[1]} back={url(locale,section)}>
+    {article && entry && <div class="meta"><a href={url(locale,'about')}>{brand.name}</a><span>·</span><time datetime={article.publishedAt.toISOString()}>{formattedDate(entry)}</time><span>·</span><span>{readingTime(entry)} {t.min}</span></div>}
+    {resource && <div class="meta">{resource.creator}</div>}
+    {d && d.tags.length > 0 && <div class="tag-list">{d.tags.map(tag => <a class="tag" href={url(locale,section) + '?tag=' + encodeURIComponent(tag)}>{tag}</a>)}</div>}
+  </PageHeading>
+  <div class="wrap page-body">
+    {d?.coverImage && <img class="article-cover" src={asset(d.coverImage)} alt="" width="800" height="450" decoding="async"/>}
+    {Content && <div class="article-grid">
+      <div class="article-body">{resource?.commentary && <p>{resource.commentary}</p>}<Content/>{resource && <a class="button secondary" href={resource.externalUrl}>{pt?'Abrir recurso':'Open resource'} <Icon name="diagonal" size={15}/></a>}</div>
+      {toc && <nav class="toc" aria-label={t.contents}><strong>{t.contents}</strong><ul>{headings.map(h => <li><a href={'#' + h.slug}>{h.text}</a></li>)}</ul></nav>}
+    </div>}
+    {entry && <div class="actions share" hidden data-share data-copied={t.copied} data-failed={t.copyFailed}>
+      <a class="button secondary" data-native-share href={emailShare}>{t.share}</a>
+      <button type="button" class="button secondary" data-copy-link>{t.copy}</button><span role="status"></span>
+    </div>}
+    {related.length > 0 && <section class="related"><h2>{section === 'library' ? (pt?'Recursos relacionados':'Related resources') : t.related}</h2><div class="editorial-grid">{related.map(item => <EditorialCard entry={item} category={category(item)}/>)}</div></section>}
+    {article && <Connect {locale}/>}
+    {toolIndex >= 0 && <Lab {locale} index={toolIndex}/>}
+  </div>
+</Shell>
+<script>
+  const actions = document.querySelector<HTMLElement>('[data-share]');
+  if (actions) {
+    actions.hidden = false;
+    const status = actions.querySelector<HTMLElement>('[role=status]')!;
+    actions.querySelector('[data-copy-link]')?.addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(location.href);
+        status.textContent = actions.dataset.copied || '';
+      } catch { status.textContent = actions.dataset.failed || ''; }
+    });
+    if (typeof navigator.share === 'function') {
+      actions.querySelector('[data-native-share]')?.addEventListener('click', event => {
+        event.preventDefault();
+        void navigator.share({title:document.title,url:location.href}).catch(() => {});
+      });
+    }
+  }
+</script>

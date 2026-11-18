@@ -1,0 +1,8 @@
+---
+import {asset,brand,copy,type Locale} from '../lib/site';
+const {locale} = Astro.props as {locale:Locale};
+---
+<div class="about-intro">
+  {brand.portrait ? <img class="portrait" src={asset(brand.portrait)} alt={brand.name} width="320" height="320" loading="lazy" decoding="async"/> : <div class="identity-art" aria-hidden="true"><span>am<b>.</b></span></div>}
+  <div><div class="eyebrow">{brand.name}</div><p>{copy[locale].bio}</p><slot/></div>
+</div>

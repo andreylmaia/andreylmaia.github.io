@@ -1,0 +1,12 @@
+---
+import Icon from './Icon.astro';
+interface Props {
+  caption: string;
+  steps: string[];
+}
+const {caption,steps} = Astro.props;
+---
+<figure class="tool-panel">
+  <figcaption>{caption}</figcaption>
+  <ol class="contact-topics">{steps.map((step,index) => <li>{step} {index < steps.length-1 && <Icon name="arrow" size={14}/>}</li>)}</ol>
+</figure>

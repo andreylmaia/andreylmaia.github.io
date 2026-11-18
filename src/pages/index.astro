@@ -1,0 +1,21 @@
+---
+import {url} from '../lib/site';
+const en = url('en');
+const pt = url('pt');
+---
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Andrey Maia</title>
+<link rel="canonical" href={new URL(en,Astro.site)}/>
+<noscript><meta http-equiv="refresh" content={`0;url=${en}`}/></noscript>
+<script is:inline define:vars={{en,pt}}>
+  let target = en;
+  try { if (localStorage.getItem('am-language') === 'pt') target = pt; } catch {}
+  location.replace(target);
+</script>
+</head>
+<body><a href={en}>English</a> · <a href={pt} lang="pt-BR">Português</a></body>
+</html>

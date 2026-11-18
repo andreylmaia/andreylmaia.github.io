@@ -1,0 +1,15 @@
+# Design system
+
+`src/styles/site.css` defines semantic variables for backgrounds, surfaces, readable text, blue accents, borders and positive states. Light is the default. The dark palette lives under `data-theme=dark`. Adjust the two palettes together and check contrast in both modes. The site self-hosts Geist Variable and JetBrains Mono.
+
+Content uses the `.wrap` width and fluid gutter. Section spacing uses `--space`, panels use `--radius`, and floating payment elements share `--shadow`. Standard responsive transitions live at 1000, 850, 680 and 370 pixels. Motion respects the visitor’s reduced-motion preference.
+
+- `Shell.astro` provides navigation, language and theme controls, skip navigation, metadata and footer.
+- `PageHeading.astro` sets the title, summary and optional back link. Use `.section-head` for section-level headings.
+- `EditorialCard.astro` supports text-only, image and featured entries.
+- `Connect.astro` is the shared invitation to the contact page.
+- `Indicators.astro` displays published values, dates and source attribution, with an empty state when there are no datasets.
+- `Lab.astro` provides reusable input, metric, journal and chart patterns. Give charts readable labels, keep results available as text, and use a localized status region for asynchronous updates.
+- `FinancialDiagram.astro` provides a captioned sequence for MDX. Math uses KaTeX.
+
+Check at desktop and phone widths, including Portuguese copy. Preserve visible focus, readable chart values and static links. Reserve larger cards for featured items.

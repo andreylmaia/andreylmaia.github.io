@@ -1,0 +1,10 @@
+---
+interface Props { title: string; description?: string; label?: string; back?: string }
+const {title,description,label,back} = Astro.props;
+---
+<header class="wrap page-heading">
+  {label && (back ? <a class="eyebrow" href={back}>{label}</a> : <div class="eyebrow">{label}</div>)}
+  <h1>{title}</h1>
+  {description && <p>{description}</p>}
+  <slot/>
+</header>

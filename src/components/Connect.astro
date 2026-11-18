@@ -1,0 +1,13 @@
+---
+import {copy, url, type Locale} from '../lib/site';
+import Icon from './Icon.astro';
+const {locale} = Astro.props as {locale:Locale};
+const t = copy[locale];
+---
+<section class="connect-band">
+  <div>
+    <h2>{t.connect[0]} <span>{t.connect[1]}</span></h2>
+    <p>{t.connectDesc}</p>
+  </div>
+  <a class="button primary" href={url(locale,'connect')}>{t.contact}<Icon name="diagonal" size={16}/></a>
+</section>

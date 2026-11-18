@@ -1,0 +1,63 @@
+---
+import Shell from '../../layouts/Shell.astro';
+import Icon from '../../components/Icon.astro';
+import PaymentArt from '../../components/PaymentArt.astro';
+import EditorialCard from '../../components/EditorialCard.astro';
+import LabPreview from '../../components/LabPreview.astro';
+import Connect from '../../components/Connect.astro';
+import AboutIntro from '../../components/AboutIntro.astro';
+import Indicators from '../../components/Indicators.astro';
+import {brand, copy, labIds, locales, pillars, url, type Locale} from '../../lib/site';
+import {entries,resourceLabel} from '../../lib/editorial';
+export const getStaticPaths = () => locales.map(lang => ({params:{lang}}));
+const locale = Astro.params.lang as Locale;
+const t = copy[locale];
+const insights = await entries('insights',locale);
+const featured = insights.find(item => item.data.featured) || insights[0];
+const latest = featured ? [featured,...insights.filter(item => item !== featured).slice(0,3)] : [];
+const library = (await entries('library',locale)).filter(item => item.data.featured).slice(0,3);
+const schema = {'@type':'Person', name:brand.name, url:new URL(url(locale),Astro.site).href, sameAs:[brand.github,brand.linkedin].filter(Boolean), description:t.position};
+---
+<Shell {locale} {schema}>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <div class="eyebrow region"><span></span>{t.region}</div>
+        <h1>{t.hero.map((line,i) => <span class:list={[i === 2 && 'accent']}>{line}</span>)}</h1>
+        <p class="position">{t.position}</p>
+        <p class="intro">{t.intro}</p>
+        <div class="actions"><a class="button primary" href={url(locale,'insights')}>{t.explore}<Icon name="arrow" size={17}/></a><a class="button secondary" href={url(locale,'labs')}>{t.discover}<Icon name="diagonal" size={16}/></a></div>
+      </div>
+      <PaymentArt {locale}/>
+    </div>
+  </section>
+  <section class="wrap section perspectives">
+    <div class="section-head"><div><div class="eyebrow">{t.nav[0]}</div><h2>{t.perspectives}</h2></div></div>
+    <div class="pillar-grid">
+      {t.pillars.map(([title, subtitle, description],i) => <a class="pillar" href={url(locale,'insights') + '?category=' + pillars[i]}><span class="tile-icon"><Icon name={['layers','boxes','trend'][i]}/></span><Icon name="diagonal" size={18}/><h3>{title}</h3><b>{subtitle}</b><p>{description}</p></a>)}
+    </div>
+  </section>
+  <section class="wrap section divider">
+    <div class="section-head"><h2>{t.latest}</h2><a class="text-link" href={url(locale,'insights')}>{t.view}<Icon name="arrow" size={16}/></a></div>
+    {latest.length ? <div class="editorial-grid">{latest.map((entry,i) => <EditorialCard {entry} featured={i === 0} category={t.pillars[pillars.indexOf(entry.data.category as typeof pillars[number])]?.[0] || ''}/>)}</div> : <p class="empty"><Icon name="book"/>{t.insightsEmpty}</p>}
+  </section>
+  <section class="labs-band">
+    <div class="wrap section">
+      <div class="section-head"><div><div class="eyebrow">{t.nav[1]}</div><h2>{t.labs}</h2><p>{t.labsDesc}</p></div><a class="text-link" href={url(locale,'labs')}>{t.view}<Icon name="arrow" size={16}/></a></div>
+      <div class="labs-grid">{labIds.map((_,index) => <LabPreview {locale} {index}/>)}</div>
+    </div>
+  </section>
+  <section class="wrap section">
+    <div class="section-head"><div><div class="eyebrow">{t.nav[2]}</div><h2>{t.intelligence}</h2><p>{t.intelDesc}</p></div><a class="text-link" href={url(locale,'intelligence')}>{t.view}<Icon name="arrow" size={16}/></a></div>
+    <Indicators {locale} limit={3}/>
+  </section>
+  <section class="wrap section divider">
+    <div class="section-head"><div><div class="eyebrow">{t.nav[3]}</div><h2>{t.library}</h2><p>{t.libraryDesc}</p></div><a class="text-link" href={url(locale,'library')}>{t.view}<Icon name="arrow" size={16}/></a></div>
+    {library.length ? <div class="editorial-grid">{library.map(entry => <EditorialCard {entry} category={resourceLabel(locale,entry.data.category)}/>)}</div> : <p class="empty"><Icon name="book"/>{t.libraryEmpty}</p>}
+  </section>
+  <section class="wrap section divider">
+    <div class="section-head"><h2>{t.about}</h2></div>
+    <AboutIntro {locale}><a class="text-link" href={url(locale,'about')}>{t.nav[4]}<Icon name="arrow" size={16}/></a></AboutIntro>
+  </section>
+  <div class="wrap section connect-wrap"><Connect {locale}/></div>
+</Shell>

@@ -1,0 +1,11 @@
+---
+import Shell from '../layouts/Shell.astro';
+import {url} from '../lib/site';
+---
+<Shell locale="en" title="Page unavailable" alternate={null} noindex>
+  <section class="wrap section">
+    <div class="eyebrow">404</div><h1>Page unavailable.</h1>
+    <p lang="pt-BR">Página indisponível.</p>
+    <div class="actions"><a class="button primary" href={url('en')}>English</a><a class="button secondary" href={url('pt')} lang="pt-BR">Português</a></div>
+  </section>
+</Shell>

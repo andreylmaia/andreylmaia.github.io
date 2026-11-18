@@ -1,0 +1,82 @@
+---
+import EditorialCard from './EditorialCard.astro';
+import {entries, resourceLabel, type EditorialSection} from '../lib/editorial';
+import {copy,pillars,type Locale} from '../lib/site';
+const {locale,section} = Astro.props as {locale:Locale;section:EditorialSection};
+const t = copy[locale];
+const pt = locale === 'pt';
+const items = await entries(section,locale);
+const categories = section === 'insights' ? [...pillars] : ['books','tools','articles','research','frameworks','podcasts','people','resources'];
+const label = (category:string) => section === 'insights' ? t.pillars[categories.indexOf(category)][0] : resourceLabel(locale,category);
+const tags = [...new Set(items.flatMap(item => item.data.tags))].sort((a,b) => a.localeCompare(b,locale));
+const featured = items.find(item => item.data.featured);
+const ordered = featured ? [featured,...items.filter(item => item !== featured)] : items;
+---
+<div data-catalog data-lang={locale}>
+  <p class="notice" role="status" data-translation hidden>{t.translation}</p>
+  <form class="filters" role="search" hidden>
+    <label>{t.search}<input type="search" name="q"/></label>
+    <label>{pt?'Categoria':'Category'}<select name="category"><option value="">{t.all}</option>{categories.map(key => <option value={key}>{label(key)}</option>)}</select></label>
+    {tags.length > 0 && <label>{pt?'Etiqueta':'Tag'}<select name="tag"><option value="">{t.all}</option>{tags.map(tag => <option value={tag}>{tag}</option>)}</select></label>}
+  </form>
+  {!items.length && <p class="empty">{section === 'insights' ? t.insightsEmpty : t.libraryEmpty}</p>}
+  <p class="empty" role="status" data-no-results hidden>{t.none}</p>
+  <div class="catalog-grid">
+    {ordered.map(entry => <div class="catalog-items" data-entry data-category={entry.data.category} data-tags={JSON.stringify(entry.data.tags)} data-search={[entry.data.title, entry.data.description, label(entry.data.category), ...entry.data.tags].join(' ')}><EditorialCard {entry} featured={entry === featured} category={label(entry.data.category)}/></div>)}
+  </div>
+  <nav class="pagination" aria-label={pt?'Paginação':'Pagination'} hidden>
+    <button class="button secondary" type="button" data-prev>{pt?'Anterior':'Previous'}</button>
+    <span data-page role="status"></span>
+    <button class="button secondary" type="button" data-next>{pt?'Próxima':'Next'}</button>
+  </nav>
+</div>
+<script>
+  for (const catalog of document.querySelectorAll<HTMLElement>('[data-catalog]')) {
+    const form = catalog.querySelector<HTMLFormElement>('form')!;
+    const items = [...catalog.querySelectorAll<HTMLElement>('[data-entry]')];
+    const params = new URLSearchParams(location.search);
+    catalog.querySelector<HTMLElement>('[data-translation]')!.hidden = params.get('translation') !== 'missing';
+    form.hidden = items.length === 0 && !params.has('category');
+    const q = form.elements.namedItem('q') as HTMLInputElement;
+    const category = form.elements.namedItem('category') as HTMLSelectElement;
+    const tag = form.elements.namedItem('tag') as HTMLSelectElement|null;
+    q.value = params.get('q') || '';
+    category.value = params.get('category') || '';
+    if (tag) tag.value = params.get('tag') || '';
+    const prev = catalog.querySelector<HTMLButtonElement>('[data-prev]')!;
+    const next = catalog.querySelector<HTMLButtonElement>('[data-next]')!;
+    const pagination = prev.parentElement!;
+    const normalize = (s:string) => s.normalize('NFD').replace(/\p{Diacritic}/gu,'').toLocaleLowerCase(catalog.dataset.lang);
+    let page = Math.max(1,Number.parseInt(params.get('page') || '1',10) || 1);
+    const pageSize = 9;
+    function show(write: boolean) {
+      const search = normalize(q.value.trim());
+      const matches = items.filter(item =>
+        (!category.value || item.dataset.category === category.value) &&
+        (!tag?.value || (JSON.parse(item.dataset.tags || '[]') as string[]).includes(tag.value)) &&
+        normalize(item.dataset.search || '').includes(search)
+      );
+      const total = Math.max(1,Math.ceil(matches.length/pageSize));
+      page = Math.min(page,total);
+      const visible = new Set(matches.slice((page-1)*pageSize,page*pageSize));
+      items.forEach(item => item.hidden = !visible.has(item));
+      catalog.querySelector<HTMLElement>('[data-no-results]')!.hidden = !items.length || !!matches.length;
+      pagination.hidden = total < 2;
+      prev.disabled = page <= 1;
+      next.disabled = page >= total;
+      catalog.querySelector('[data-page]')!.textContent = `${page} / ${total}`;
+      if (!write) return;
+      for (const [key,value] of Object.entries({q:q.value.trim(),category:category.value,tag:tag?.value || '',page:page > 1 ? String(page) : ''})) {
+        if (value) params.set(key,value);
+        else params.delete(key);
+      }
+      const query = params.toString();
+      history.replaceState(null,'',location.pathname + (query ? '?' + query : ''));
+    }
+    form.addEventListener('submit', event => event.preventDefault());
+    form.addEventListener('input', () => {page = 1; show(true);});
+    prev.addEventListener('click', () => {page--; show(true);});
+    next.addEventListener('click', () => {page++; show(true);});
+    show(false);
+  }
+</script>
