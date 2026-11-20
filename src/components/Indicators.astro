@@ -1,7 +1,7 @@
 ---
 import Icon from './Icon.astro';
 import {countries, indicatorGroups, type CountryIndicator} from '../data/indicators';
-import {copy, language, url, type Locale} from '../lib/site';
+import {asset, copy, language, url, type Locale} from '../lib/site';
 
 const {locale, homepage = false} = Astro.props as {locale: Locale; homepage?: boolean};
 const t = copy[locale];
@@ -31,12 +31,13 @@ const format = (item: CountryIndicator) => {
 <div data-country-overview>
   <div class="overview-heading">
     {homepage && <div><h2>{t.intelligence}</h2><p>{t.intelDesc}</p></div>}
-    {initial && <label class="country-selector">
-      {labels.country}
-      <select data-country-select>
-        {countries.map(country => <option value={country.code} selected={country === initial}>{country.name[locale]}</option>)}
-      </select>
-    </label>}
+    {initial && (countries.length === 1
+      ? <img class="country-flag" src={asset(initial.flag)} alt={initial.name[locale]} title={initial.name[locale]} width="36" height="25"/>
+      : <div class="country-flags" role="group" aria-label={labels.country}>
+          {countries.map(country => <button type="button" data-country-choice={country.code} aria-pressed={country === initial} title={country.name[locale]}>
+            <img src={asset(country.flag)} alt={country.name[locale]} width="36" height="25"/>
+          </button>)}
+        </div>)}
   </div>
   {!initial && <p class="empty">{t.unavailable}</p>}
   {countries.map(country => {
@@ -89,12 +90,14 @@ const format = (item: CountryIndicator) => {
 
 <script>
   for (const overview of document.querySelectorAll('[data-country-overview]')) {
-    const selector = overview.querySelector<HTMLSelectElement>('[data-country-select]');
-    if (!selector || selector.options.length < 2) continue;
+    const choices = overview.querySelectorAll<HTMLButtonElement>('[data-country-choice]');
     const panels = overview.querySelectorAll<HTMLElement>('[data-country-panel]');
-    selector.addEventListener('change', () => {
-      for (const panel of panels) panel.hidden = panel.dataset.countryPanel !== selector.value;
-    });
+    for (const choice of choices) {
+      choice.addEventListener('click', () => {
+        for (const button of choices) button.setAttribute('aria-pressed', String(button === choice));
+        for (const panel of panels) panel.hidden = panel.dataset.countryPanel !== choice.dataset.countryChoice;
+      });
+    }
   }
 </script>
 
@@ -102,8 +105,11 @@ const format = (item: CountryIndicator) => {
   .overview-heading{display:flex;align-items:end;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;margin-bottom:16px}
   .overview-heading h2{margin:0}
   .overview-heading p{margin-top:4px}
-  .country-selector{display:grid;gap:4px;margin-inline-start:auto;color:var(--muted);font-size:13px}
-  .country-selector select{min-height:36px;padding:4px 24px 4px 10px;border:1px solid var(--border);border-radius:7px;background:var(--surface);color:var(--ink);font:inherit}
+  .country-flag,.country-flags{margin-inline-start:auto}
+  .country-flag,.country-flags img{display:block;width:36px;height:25px;object-fit:contain;border-radius:3px}
+  .country-flags{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:4px}
+  .country-flags button{padding:4px;border:1px solid transparent;border-radius:6px;background:transparent}
+  .country-flags button[aria-pressed=true]{border-color:var(--accent);background:var(--soft)}
   .indicator-columns{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px clamp(18px,3vw,44px)}
   .indicator-columns :is(h2,h3){margin:0;padding-bottom:7px;font-size:16px;color:var(--accent)}
   .indicator-columns dl,.indicator-columns dd{margin:0}

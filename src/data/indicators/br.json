@@ -1,6 +1,7 @@
 {
   "code": "BR",
   "name": {"en": "Brazil", "pt": "Brasil"},
+  "flag": "images/flags/br.png",
   "indicators": {
     "population": {"unit": "compact", "value": null},
     "adults": {"unit": "compact", "value": null},

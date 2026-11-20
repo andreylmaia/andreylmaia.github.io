@@ -27,6 +27,7 @@ const indicator = z.discriminatedUnion('unit', [
 const countrySchema = z.object({
   code: z.string().regex(/^[A-Z]{2}$/),
   name: localized,
+  flag: z.string().regex(/^images\/flags\/[a-z]{2}\.png$/),
   indicators: z.record(z.enum(ids), indicator),
 }).superRefine((country, context) => {
   for (const [id, item] of Object.entries(country.indicators)) {

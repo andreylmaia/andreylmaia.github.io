@@ -1,10 +1,12 @@
 # Data sources
 
-The homepage and Intelligence page share the country overview. Brazil is the default and each country with at least one published value appears in the selector. Data is loaded at build time.
+The homepage and Intelligence page share the country overview. Brazil is the default and each country with at least one published value is represented by its flag. Data is loaded at build time.
+
+The Brazil flag is stored locally from [FlagCDN](https://flagcdn.com/w80/br.png).
 
 ## Add or update a dataset
 
-Add an object to `src/data/indicators/<country-code>.json`, following the Brazil example in `br.json`. Supply a unique two-letter country code, English and Portuguese names, and one record per indicator ID from `src/data/indicators.ts`.
+Add an object to `src/data/indicators/<country-code>.json`, following the Brazil example in `br.json`. Supply a unique two-letter country code, English and Portuguese names, a local PNG flag path under `images/flags/`, and one record per indicator ID from `src/data/indicators.ts`.
 
 - Use `value: null` for unavailable data. Values and sources are shared across locales.
 - Set `unit` to `text`, `count`, `compact`, `percent`, `currency`, or `compactCurrency`. Use raw numeric counts and amounts, percentage points for percentages (55.2 means 55.2%), and a three-letter currency code with currency units. The display formats numbers for each locale.
