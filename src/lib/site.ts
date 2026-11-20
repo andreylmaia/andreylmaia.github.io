@@ -27,7 +27,7 @@ export const copy = {
   en: {
     linkedin: {source: 'Source', website: 'Articles', post: 'LinkedIn Post', article: 'LinkedIn Article', read: 'Read on LinkedIn', newTab: 'opens in a new tab'},
     nav: ['Insights', 'Labs', 'Intelligence', 'Library', 'About', 'Connect', 'Privacy'],
-    hero: ['Money.', 'Technology.', 'The art of building.'],
+    hero: ['Money.Technology.', 'The art of building.'],
     position: 'Building banking & payment products in emerging markets.',
     intro: 'A personal space to explore financial systems, share ideas, experiment with technology and make sense of a changing world.',
     region: 'BRAZIL / CHINA / EMERGING MARKETS',
@@ -90,7 +90,7 @@ export const copy = {
   pt: {
     linkedin: {source: 'Origem', website: 'Artigos', post: 'Publicação no LinkedIn', article: 'Artigo no LinkedIn', read: 'Ler no LinkedIn', newTab: 'abre em uma nova aba'},
     nav: ['Insights', 'Labs', 'Inteligência', 'Biblioteca', 'Sobre', 'Contato', 'Privacidade'],
-    hero: ['Dinheiro.', 'Tecnologia.', 'A arte de construir.'],
+    hero: ['Dinheiro.Tecnologia.', 'A arte de construir.'],
     position: 'Construindo produtos bancários e de pagamentos em mercados emergentes.',
     intro: 'Um espaço pessoal para explorar sistemas financeiros, compartilhar ideias, experimentar com tecnologia e entender um mundo em transformação.',
     region: 'BRASIL / CHINA / MERCADOS EMERGENTES',

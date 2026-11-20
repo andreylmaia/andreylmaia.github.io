@@ -6,7 +6,7 @@ Content uses the `.wrap` width and fluid gutter. Section spacing uses `--space`,
 
 - `Shell.astro` provides navigation, language and theme controls, skip navigation, metadata and footer.
 - `PageHeading.astro` sets the title, summary and optional back link. Use `.section-head` for section-level headings.
-- `EditorialCard.astro` supports text-only, image and featured entries.
+- `EditorialCard.astro` supports text-only, image and featured entries. Library book covers fit inside the image area so the full cover stays visible.
 - `Connect.astro` is the shared invitation to the contact page. `ConversationStarter.astro` renders only the contact channels configured for the site.
 - `ProfilePortrait.astro` renders the shared optimized portrait at its natural aspect ratio and provides localized alt text.
 - `Indicators.astro` displays published values, dates and source attribution, with an empty state when there are no datasets.

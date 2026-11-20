@@ -25,7 +25,7 @@ const schema = {'@type':'Person', name:brand.name, url:new URL(url(locale),Astro
     <div class="wrap hero-grid">
       <div class="hero-copy">
         <Author {locale} variant="signature"/>
-        <h1>{t.hero.map((line,i) => <span class:list={[i === 2 && 'accent']}>{line}</span>)}</h1>
+        <h1><span>{t.hero[0]}</span>{' '}<span class="accent">{t.hero[1]}</span></h1>
         <p class="position">{t.position}</p>
         <p class="intro">{t.intro}</p>
         <div class="actions"><a class="button primary" href={url(locale,'insights')}>{t.explore}<Icon name="arrow" size={17}/></a><a class="button secondary" href={url(locale,'labs')}>{t.discover}<Icon name="diagonal" size={16}/></a></div>

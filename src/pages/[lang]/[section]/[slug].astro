@@ -56,7 +56,7 @@ const schema = article ? {'@type':'Article',headline:title,description,datePubli
   </PageHeading>
   {article && <div class="reading-progress" aria-hidden="true" hidden></div>}
   <div class="wrap page-body">
-    {d?.coverImage && <img class="article-cover" src={asset(d.coverImage)} alt="" width="800" height="450" decoding="async"/>}
+    {d?.coverImage && <img class:list={['article-cover', resource?.category === 'books' && 'book-cover']} src={asset(d.coverImage)} alt="" width="800" height="450" decoding="async"/>}
     {Content && <div class="article-grid">
       <div class="article-body" data-analytics-article={article?.id} data-category={article?.category}>{resource?.commentary && <p>{resource.commentary}</p>}<Content/>{article && <div class="article-end" data-article-end aria-hidden="true"></div>}{resource && <a class="button secondary" href={resource.externalUrl} data-analytics-action="resource_clicked" data-content-id={resource.id} data-category={resource.category}>{pt?'Abrir recurso':'Open resource'} <Icon name="diagonal" size={15}/></a>}</div>
       {toc && <nav data-pagefind-ignore class="toc" aria-label={t.contents}><strong>{t.contents}</strong><ul>{headings.map(h => <li><a href={'#' + h.slug}>{h.text}</a></li>)}</ul></nav>}

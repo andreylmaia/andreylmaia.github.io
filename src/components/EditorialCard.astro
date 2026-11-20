@@ -7,7 +7,7 @@ const {entry, category, featured = false} = Astro.props as {entry: Entry; catego
 const d = entry.data;
 const link = url(d.locale, `${entry.collection}/${d.slug}`);
 ---
-<article class:list={['editorial-card',featured && 'featured']}>
+<article class:list={['editorial-card',entry.collection === 'library' && d.category === 'books' && 'book-card',featured && 'featured']}>
   {d.coverImage && <a href={link} tabindex="-1" aria-hidden="true"><img src={asset(d.coverImage)} alt="" loading="lazy" decoding="async" width="640" height="360"/></a>}
   <div class="editorial-body">
     <div class="eyebrow">{category}</div>
