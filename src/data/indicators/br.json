@@ -1,0 +1,68 @@
+{
+  "code": "BR",
+  "name": {"en": "Brazil", "pt": "Brasil"},
+  "indicators": {
+    "population": {"unit": "compact", "value": null},
+    "adults": {"unit": "compact", "value": null},
+    "employed": {"unit": "compact", "value": null},
+    "urbanization": {"unit": "percent", "value": null},
+    "states": {
+      "unit": "count",
+      "value": 27,
+      "source": {"name": "IBGE", "url": "https://educa.ibge.gov.br/jovens/conheca-o-brasil/territorio/19637-divisao-territorial.html"},
+      "updatedAt": "2026-11-20",
+      "methodology": {"en": "26 states plus the Federal District.", "pt": "26 estados mais o Distrito Federal."}
+    },
+    "municipalities": {"unit": "count", "value": null},
+    "gdp": {"unit": "compactCurrency", "currency": "BRL", "value": null},
+    "gdpGrowth": {"unit": "percent", "value": null},
+    "gdpPerCapita": {"unit": "currency", "currency": "BRL", "value": null},
+    "inflation": {"unit": "percent", "value": null},
+    "unemployment": {"unit": "percent", "value": null},
+    "policyRate": {"unit": "percent", "value": null},
+    "currency": {
+      "unit": "text",
+      "value": "BRL",
+      "source": {"name": "BCB", "url": "https://ptax.bcb.gov.br/ptax_internet/consultarTabelaMoedasIngles.do?method=consultaTabelaMoedas"},
+      "updatedAt": "2026-11-20",
+      "methodology": {"en": "Currency code for the Brazilian real.", "pt": "Código monetário do real brasileiro."}
+    },
+    "regulator": {
+      "unit": "text",
+      "value": "BCB",
+      "source": {"name": "BCB", "url": "https://www.bcb.gov.br/en/about/index.html"},
+      "updatedAt": "2026-11-20",
+      "methodology": {"en": "Banco Central do Brasil, Brazil’s monetary authority and a regulator and supervisor of the financial system.", "pt": "Banco Central do Brasil, autoridade monetária brasileira que regula e supervisiona o sistema financeiro."}
+    },
+    "mainRail": {
+      "unit": "text",
+      "value": "Pix",
+      "source": {"name": "BCB", "url": "https://www.bcb.gov.br/en/financialstability/pixfaqen"},
+      "updatedAt": "2026-11-20",
+      "methodology": {"en": "The representative domestic payment scheme shown here is Brazil’s instant payment scheme.", "pt": "O arranjo doméstico de pagamentos representado aqui é o sistema brasileiro de pagamentos instantâneos."}
+    },
+    "railCoverage": {
+      "unit": "percent",
+      "value": null,
+      "methodology": {"en": "Pix transaction count divided by total payment transaction count for the same period and statistical scope.", "pt": "Quantidade de transações Pix dividida pelo total de transações de pagamento no mesmo período e recorte estatístico."}
+    },
+    "monthlyTransactions": {
+      "unit": "compact",
+      "value": null,
+      "referencePeriod": "2026-07",
+      "methodology": {"en": "Number of Pix transactions processed during the reference month.", "pt": "Quantidade de transações Pix processadas no mês de referência."}
+    },
+    "monthlyVolume": {
+      "unit": "compactCurrency",
+      "currency": "BRL",
+      "value": null,
+      "referencePeriod": "2026-07",
+      "methodology": {"en": "Total value of Pix transactions processed during the same month as the transaction count.", "pt": "Valor total das transações Pix processadas no mesmo mês usado para a contagem de transações."}
+    },
+    "institutions": {
+      "unit": "count",
+      "value": null,
+      "methodology": {"en": "This count requires a defined regulatory category and reporting scope.", "pt": "A contagem exige uma categoria regulatória e um universo de apuração definidos."}
+    }
+  }
+}

@@ -9,7 +9,7 @@ Content uses the `.wrap` width and fluid gutter. Section spacing uses `--space`,
 - `EditorialCard.astro` supports text-only, image and featured entries. Library book covers fit inside the image area so the full cover stays visible.
 - `Connect.astro` is the shared invitation to the contact page. `ConversationStarter.astro` renders only the contact channels configured for the site.
 - `ProfilePortrait.astro` renders the shared optimized portrait at its natural aspect ratio and provides localized alt text.
-- `Indicators.astro` displays published values, dates and source attribution, with an empty state when there are no datasets.
+- `Indicators.astro` uses compact name/value rows in three columns that stack on mobile. Keep numeric values right-aligned with tabular figures and place per-indicator sources and periods in the expandable footer.
 - `Lab.astro` provides reusable input, metric, journal and chart patterns. Give charts readable labels, keep results available as text, and use a localized status region for asynchronous updates.
 - `FinancialDiagram.astro` provides a captioned sequence for MDX. Math uses KaTeX.
 

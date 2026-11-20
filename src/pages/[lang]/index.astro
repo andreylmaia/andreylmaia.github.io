@@ -27,7 +27,6 @@ const schema = {'@type':'Person', name:brand.name, url:new URL(url(locale),Astro
         <Author {locale} variant="signature"/>
         <h1><span>{t.hero[0]}</span>{' '}<span class="accent">{t.hero[1]}</span></h1>
         <p class="position">{t.position}</p>
-        <p class="intro">{t.intro}</p>
         <div class="actions"><a class="button primary" href={url(locale,'insights')}>{t.explore}<Icon name="arrow" size={17}/></a><a class="button secondary" href={url(locale,'labs')}>{t.discover}<Icon name="diagonal" size={16}/></a></div>
       </div>
       <PaymentArt {locale}/>
@@ -51,8 +50,7 @@ const schema = {'@type':'Person', name:brand.name, url:new URL(url(locale),Astro
     </div>
   </section>
   <section class="wrap section">
-    <div class="section-head"><div><div class="eyebrow">{t.nav[2]}</div><h2>{t.intelligence}</h2><p>{t.intelDesc}</p></div><a class="text-link" href={url(locale,'intelligence')}>{t.view}<Icon name="arrow" size={16}/></a></div>
-    <Indicators {locale} limit={3}/>
+    <Indicators {locale} homepage/>
   </section>
   <section class="wrap section divider">
     <div class="section-head"><div><div class="eyebrow">{t.nav[3]}</div><h2>{t.library}</h2><p>{t.libraryDesc}</p></div><a class="text-link" href={url(locale,'library')}>{t.view}<Icon name="arrow" size={16}/></a></div>
