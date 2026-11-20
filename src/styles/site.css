@@ -258,3 +258,10 @@ h1{font-size:clamp(44px,6vw,78px);font-weight:670}h2{font-size:clamp(34px,4.2vw,
   .header-actions{gap:3px;padding-left:5px}
   .header-actions .icon-button{min-width:32px;padding-inline:4px}
 }
+
+.linkedin-card{position:relative}
+.linkedin-card img{display:block}
+.linkedin-card.featured:not(:has(img:not([hidden]))) .editorial-body{grid-column:1/-1}
+.linkedin-card .text-link{margin-top:6px}
+.linkedin-card .text-link::after{content:"";position:absolute;inset:0;border-radius:inherit}
+.linkedin-card:focus-within{outline:3px solid var(--accent);outline-offset:4px}

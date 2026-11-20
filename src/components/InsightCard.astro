@@ -1,0 +1,32 @@
+---
+import EditorialCard from './EditorialCard.astro';
+import Icon from './Icon.astro';
+import { insightCategory, linkedInCover, type Insight } from '../lib/insights';
+import { copy, language, type Locale } from '../lib/site';
+
+const { item, locale, featured = false } = Astro.props as {item: Insight; locale: Locale; featured?: boolean};
+const category = insightCategory(locale, item.category);
+const labels = copy[locale].linkedin;
+const cover = item.source === 'linkedin' ? linkedInCover(item.images[0]) : undefined;
+---
+{item.source === 'website' ? <EditorialCard entry={item.entry} {category} {featured}/> :
+  <article class:list={['editorial-card', 'linkedin-card', featured && 'featured']}>
+    {cover && <img data-linkedin-cover src={cover} alt={item.title} lang={language(item.locale)} width="640" height="360" loading="lazy" decoding="async"/>}
+    <div class="editorial-body">
+      <div class="eyebrow">{labels[item.type]} · {category}</div>
+      <h3 lang={language(item.locale)}>{item.title}</h3>
+      <p lang={language(item.locale)}>{item.description}</p>
+      {item.publishedAt && <div class="meta"><time datetime={item.publishedAt.toISOString()}>{new Intl.DateTimeFormat(language(locale), {dateStyle:'medium', timeZone:'UTC'}).format(item.publishedAt)}</time></div>}
+      <a class="text-link" href={item.url} target="_blank" rel="noopener noreferrer" aria-label={`${labels.read} — ${item.title} (${labels.newTab})`}>
+        {labels.read}<Icon name="diagonal" size={16}/>
+      </a>
+    </div>
+  </article>
+}
+<script>
+  for (const image of document.querySelectorAll<HTMLImageElement>('[data-linkedin-cover]')) {
+    const hide = () => { image.hidden = true; };
+    image.addEventListener('error', hide, {once: true});
+    if (image.complete && image.naturalWidth === 0) hide();
+  }
+</script>

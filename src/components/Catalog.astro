@@ -1,20 +1,25 @@
 ---
+import InsightCard from './InsightCard.astro';
+import {insightCategory, insights} from '../lib/insights';
 import EditorialCard from './EditorialCard.astro';
 import {entries, resourceLabel, type EditorialSection} from '../lib/editorial';
 import {copy,pillars,type Locale} from '../lib/site';
 const {locale,section} = Astro.props as {locale:Locale;section:EditorialSection};
 const t = copy[locale];
 const pt = locale === 'pt';
-const items = await entries(section,locale);
+const items = section === 'insights' ? await insights(locale) : (await entries(section, locale)).map(entry => ({
+  ...entry.data, source: 'library' as const, entry,
+}));
 const categories = section === 'insights' ? [...pillars] : ['books','tools','articles','research','frameworks','podcasts','people','resources'];
-const label = (category:string) => section === 'insights' ? t.pillars[categories.indexOf(category)][0] : resourceLabel(locale,category);
-const tags = [...new Set(items.flatMap(item => item.data.tags))].sort((a,b) => a.localeCompare(b,locale));
-const featured = items.find(item => item.data.featured);
-const ordered = featured ? [featured,...items.filter(item => item !== featured)] : items;
+const label = (category:string) => section === 'insights' ? insightCategory(locale, category as typeof pillars[number]) : resourceLabel(locale,category);
+const tags = [...new Set(items.flatMap(item => item.tags))].sort((a,b) => a.localeCompare(b,locale));
+const featured = section === 'library' ? items.find(item => item.featured) : items[0]?.featured ? items[0] : undefined;
+const ordered = section === 'library' && featured ? [featured,...items.filter(item => item !== featured)] : items;
 ---
 <div data-pagefind-ignore data-catalog data-lang={locale}>
   <p class="notice" role="status" data-translation hidden>{t.translation}</p>
   <form class="filters" role="search" hidden>
+    {section === 'insights' && <label>{t.linkedin.source}<select name="source"><option value="">{t.all}</option><option value="website">{t.linkedin.website}</option><option value="linkedin">LinkedIn</option></select></label>}
     <label>{t.search}<input type="search" name="q"/></label>
     <label>{pt?'Categoria':'Category'}<select name="category"><option value="">{t.all}</option>{categories.map(key => <option value={key}>{label(key)}</option>)}</select></label>
     {tags.length > 0 && <label>{pt?'Etiqueta':'Tag'}<select name="tag"><option value="">{t.all}</option>{tags.map(tag => <option value={tag}>{tag}</option>)}</select></label>}
@@ -22,7 +27,11 @@ const ordered = featured ? [featured,...items.filter(item => item !== featured)]
   {!items.length && <p class="empty">{section === 'insights' ? t.insightsEmpty : t.libraryEmpty}</p>}
   <p class="empty" role="status" data-no-results hidden>{t.none}</p>
   <div class="catalog-grid">
-    {ordered.map(entry => <div class="catalog-items" data-entry data-category={entry.data.category} data-tags={JSON.stringify(entry.data.tags)} data-search={[entry.data.title, entry.data.description, label(entry.data.category), ...entry.data.tags].join(' ')}><EditorialCard {entry} featured={entry === featured} category={label(entry.data.category)}/></div>)}
+    {ordered.map(item => <div class="catalog-items" data-entry data-source={item.source} data-category={item.category} data-tags={JSON.stringify(item.tags)} data-search={[item.title, item.description, label(item.category), ...item.tags].join(' ')}>
+      {item.source === 'library'
+        ? <EditorialCard entry={item.entry} featured={item === featured} category={label(item.category)}/>
+        : <InsightCard {item} {locale} featured={item === featured}/>}
+    </div>)}
   </div>
   <nav class="pagination" aria-label={pt?'Paginação':'Pagination'} hidden>
     <button class="button secondary" type="button" data-prev>{pt?'Anterior':'Previous'}</button>
@@ -39,9 +48,11 @@ const ordered = featured ? [featured,...items.filter(item => item !== featured)]
     form.hidden = items.length === 0 && !params.has('category');
     const q = form.elements.namedItem('q') as HTMLInputElement;
     const category = form.elements.namedItem('category') as HTMLSelectElement;
+    const source = form.elements.namedItem('source') as HTMLSelectElement|null;
     const tag = form.elements.namedItem('tag') as HTMLSelectElement|null;
     q.value = params.get('q') || '';
     category.value = params.get('category') || '';
+    if (source) source.value = params.get('source') || '';
     if (tag) tag.value = params.get('tag') || '';
     const prev = catalog.querySelector<HTMLButtonElement>('[data-prev]')!;
     const next = catalog.querySelector<HTMLButtonElement>('[data-next]')!;
@@ -52,6 +63,7 @@ const ordered = featured ? [featured,...items.filter(item => item !== featured)]
     function show(write: boolean) {
       const search = normalize(q.value.trim());
       const matches = items.filter(item =>
+        (!source?.value || item.dataset.source === source.value) &&
         (!category.value || item.dataset.category === category.value) &&
         (!tag?.value || (JSON.parse(item.dataset.tags || '[]') as string[]).includes(tag.value)) &&
         normalize(item.dataset.search || '').includes(search)
@@ -66,7 +78,7 @@ const ordered = featured ? [featured,...items.filter(item => item !== featured)]
       next.disabled = page >= total;
       catalog.querySelector('[data-page]')!.textContent = `${page} / ${total}`;
       if (!write) return;
-      for (const [key,value] of Object.entries({q:q.value.trim(),category:category.value,tag:tag?.value || '',page:page > 1 ? String(page) : ''})) {
+      for (const [key,value] of Object.entries({q:q.value.trim(),category:category.value,source:source?.value || '',tag:tag?.value || '',page:page > 1 ? String(page) : ''})) {
         if (value) params.set(key,value);
         else params.delete(key);
       }

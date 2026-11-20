@@ -1,0 +1,359 @@
+[
+  {
+    "id": "blocked-bank-account",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Can a blocked bank account still move money?",
+    "description": "Account access restrictions, restricted funds, and transaction restrictions are not necessarily the same thing.",
+    "url": "https://lnkd.in/p/g7kxYjbi",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "blocked_frozen.jpeg"
+    ],
+    "featured": true,
+    "sortOrder": 1
+  },
+  {
+    "id": "ledger-change",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "The ledger is trustworthy. But can it evolve with the product?",
+    "description": "A reflection on ledger architecture and evolving financial products.",
+    "url": "https://lnkd.in/p/gh2MDmXY",
+    "publishedAt": null,
+    "language": "en",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      ""
+    ],
+    "featured": false,
+    "sortOrder": 2
+  },
+  {
+    "id": "ltv-fintech",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "LTV is more than revenue multiplied by time",
+    "description": "Why margin, retention, and assumptions matter more than a simplified formula.",
+    "url": "https://lnkd.in/p/gc2vhWRB",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "building",
+    "tags": [
+      "LinkedIn",
+      "Product",
+      "Technology"
+    ],
+    "images": [
+      "ltv.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 3
+  },
+  {
+    "id": "product-pitch-price",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Product, Pitch, Price: building value is not enough",
+    "description": "How positioning, pricing, and channels shape the ability to capture value.",
+    "url": "https://lnkd.in/p/gdC2QizP",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "building",
+    "tags": [
+      "LinkedIn",
+      "Product",
+      "Technology"
+    ],
+    "images": [
+      "product_pich_price.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 4
+  },
+  {
+    "id": "china-innovation-competition",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Why do Chinese companies seem to copy everything?",
+    "description": "In China, features quickly become table stakes and competition shifts to another layer.",
+    "url": "https://lnkd.in/p/gH3J5wpm",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "building",
+    "tags": [
+      "LinkedIn",
+      "Product",
+      "Technology"
+    ],
+    "images": [
+      "china_innovation_competition.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 5
+  },
+  {
+    "id": "engineering-complexity-china",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "What China taught me about investing in complexity",
+    "description": "Engineering is not about choosing the most sophisticated architecture, but knowing when its cost is justified.",
+    "url": "https://lnkd.in/p/gH9yWmiP",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "building",
+    "tags": [
+      "LinkedIn",
+      "Product",
+      "Technology"
+    ],
+    "images": [
+      "engineering_complexity_china.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 6
+  },
+  {
+    "id": "spi-security-layers",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Why critical systems do not rely on TLS alone",
+    "description": "In SPI, security relies on complementary layers, including network, transport, and message signatures.",
+    "url": "https://lnkd.in/p/gyyXBD9k",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "spi-security-layers.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 7
+  },
+  {
+    "id": "spb-message-schedules",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Understanding the Brazilian payment system’s operating windows",
+    "description": "SFN message schedules reflect operational requirements for settlement and returns.",
+    "url": "https://lnkd.in/p/griiBVPM",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "spb-message-schedules.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 8
+  },
+  {
+    "id": "card-reusable-credentials",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "The structural problem with reusable card credentials",
+    "description": "PCI, tokenization, and other controls mitigate risks created by reusable payment credentials.",
+    "url": "https://lnkd.in/p/grj2FEX6",
+    "publishedAt": null,
+    "language": "en",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "card-reusable-credentials.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 9
+  },
+  {
+    "id": "where-money-exists",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Where does money actually exist?",
+    "description": "Displayed balance, available balance, and interbank settlement represent different realities.",
+    "url": "https://lnkd.in/p/gdnt9SYm",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "nature",
+    "tags": [
+      "LinkedIn",
+      "Money",
+      "Finance"
+    ],
+    "images": [
+      "where-money-exists.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 10
+  },
+  {
+    "id": "brazil-china-digital-payments",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Brazil and China: two architectures for digital payments",
+    "description": "Pix and Chinese payment ecosystems scaled through different structures and control models.",
+    "url": "https://lnkd.in/p/gK6wCJup",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "brazil-china-digital-payments.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 11
+  },
+  {
+    "id": "chargeback-risk",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Chargebacks: the invisible risk in card payments",
+    "description": "Authorization, settlement, and dispute liability unfold on different timelines.",
+    "url": "https://lnkd.in/p/gspudXBY",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "chargeback-risk.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 12
+  },
+  {
+    "id": "rtgs-systemic-risk",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "STR and SPI are designed to reduce systemic risk",
+    "description": "Real-time gross settlement reduces interparticipant exposure but requires liquidity.",
+    "url": "https://lnkd.in/p/gmwa-Duc",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "rtgs-systemic-risk.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 13
+  },
+  {
+    "id": "spi-architecture",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "How does SPI architecture work?",
+    "description": "Instant, final settlement requires security, availability, and continuous liquidity management.",
+    "url": "https://lnkd.in/p/gudduM4t",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "spi-architecture.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 14
+  },
+  {
+    "id": "authorization-vs-settlement",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Authorization and settlement are not the same thing",
+    "description": "Approval is not necessarily the moment money changes hands.",
+    "url": "https://lnkd.in/p/gmwa-Duc",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "authorization-vs-settlement.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 15
+  },
+  {
+    "id": "backend-vs-payments",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Why payments demand more than conventional backend design",
+    "description": "Consistency, financial states, and reconciliation change software engineering priorities.",
+    "url": "https://lnkd.in/p/gZR578i6",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "backend-vs-payments.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 16
+  },
+  {
+    "id": "technical-view-brazilian-payment-system",
+    "type": "article",
+    "platform": "linkedin",
+    "title": "A Technical View of the Brazilian Payment System",
+    "description": "An analysis of the Brazilian payment system as a system of systems: STR, SPI, RTGS, liquidity, ledgers, and reconciliation.",
+    "url": "https://lnkd.in/p/gbNvu23U",
+    "publishedAt": null,
+    "language": "en",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "technical-view-brazilian-payment-system.jpeg"
+    ],
+    "featured": true,
+    "sortOrder": 17
+  }
+]

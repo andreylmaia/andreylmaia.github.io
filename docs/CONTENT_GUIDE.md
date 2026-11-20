@@ -55,3 +55,13 @@ Edit `src/data/profile.ts` for bilingual career, education, and interests. Maint
 Each published Insight may list zero or more `relatedLabs` by ID. Supported IDs are `ledger`, `unit-economics`, and `time-value`. Links point to the matching language. The build creates a localized 1200 × 630 social image for each published Insight and Lab from its title and category. The article cover remains controlled by `coverImage`.
 
 At the end of the build, Pagefind indexes the rendered main content of Insights, Labs, Intelligence, Library, About, and Connect. To extend this list, update the route rules in `src/layouts/Shell.astro` and use `data-pagefind-ignore` for repeated content. Drafts never render as routes and therefore do not enter search, feeds, or social images. Run `npm run build` and `npm run preview` to test the search index in both languages.
+
+## LinkedIn publications in Insights
+
+Keep approved LinkedIn publications in `src/content/external/en/linkedin_content.en.json` and `src/content/external/pt/linkedin_content.pt-BR.json`. Use the same stable ID, type and original publication language in both files. The file determines the language of the card copy. If a valid translation is missing, the listing and search use the other file's record for that ID.
+
+Use the original LinkedIn HTTPS URL and an ISO date or timestamp when known. Keep unknown dates as `null`. Dated publications appear newest first across both sources, followed by undated publications in ascending `sortOrder`. The homepage shows the first three publications in this order. Invalid records and repeated IDs are reported during the build, and the first valid record for an ID is kept.
+
+List image filenames from `public/images/`, public-relative paths, or HTTPS URLs in `images`. The first reference supplies the cover. An empty or unavailable cover leaves a text-only card.
+
+The site search combines Pagefind results for native pages with a localized static JSON index for LinkedIn. The LinkedIn index matches title, description, category and tags, and results open the original publication directly. Entries in these JSON files are public and have no internal article route. Keep unpublished material outside the JSON files.

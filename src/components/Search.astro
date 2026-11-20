@@ -7,7 +7,7 @@ const pt = locale === 'pt';
 const shortcuts = [[t.explore,'insights'],[t.tools[0][0],'labs/' + labIds[0]],[t.discover,'labs'],[t.nav[3],'library'],[t.nav[4],'about'],[t.contact,'connect']];
 ---
 <button class="icon-button" type="button" data-open-search aria-label={t.search} aria-keyshortcuts="Meta+K Control+K" hidden><Icon name="search" size={17}/></button>
-<dialog class="site-search" aria-labelledby="search-title" data-engine={asset('pagefind/pagefind.js')} data-base={asset('')} data-labels={JSON.stringify(Object.fromEntries(sections.map((section,i) => [section,t.nav[i]])))}>
+<dialog class="site-search" aria-labelledby="search-title" data-engine={asset('pagefind/pagefind.js')} data-base={asset('')} data-linkedin-index={asset(`${locale}/linkedin-search.json`)} data-new-tab={t.linkedin.newTab} data-labels={JSON.stringify(Object.fromEntries(sections.map((section,i) => [section,t.nav[i]])))}>
   <div class="search-heading"><h2 id="search-title">{t.search}</h2><button type="button" class="icon-button" data-close-search aria-label={pt ? 'Fechar busca' : 'Close search'}><Icon name="close" size={19}/></button></div>
   <input type="search" autocomplete="off" aria-label={t.search} placeholder={pt ? 'Buscar no site…' : 'Search the site…'} autofocus/>
   <p class="meta" role="status" data-loading={pt ? 'Buscando…' : 'Searching…'} data-none={pt ? 'Nenhum resultado encontrado.' : 'No results found.'} data-count={pt ? 'Resultados exibidos' : 'Results shown'} data-error={pt ? 'Busca indisponível. Use os atalhos abaixo.' : 'Search unavailable. Use the shortcuts below.'}></p>
@@ -17,7 +17,8 @@ const shortcuts = [[t.explore,'insights'],[t.tools[0][0],'labs/' + labIds[0]],[t
 <script>
   import {track} from '../lib/analytics';
 
-  type Hit = {url:string; excerpt:string; meta:{title?:string; section?:string}};
+  type Hit = {url:string; excerpt:string; meta:{title?:string; section?:string}; external?:true};
+  type LinkedInRecord = {url:string; title:string; description:string; keywords:string};
   type Engine = {
     options(options:{baseUrl:string}):Promise<void>;
     init():Promise<void>;
@@ -57,25 +58,68 @@ const shortcuts = [[t.explore,'insights'],[t.tools[0][0],'labs/' + labIds[0]],[t
     const li = document.createElement('li');
     const link = document.createElement('a');
     link.href = hit.url;
+    if (hit.external) {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.setAttribute('aria-label', `${hit.meta.title} (${dialog.dataset.newTab})`);
+    }
     const title = document.createElement('strong');
     title.textContent = hit.meta.title || hit.url;
     const section = hit.meta.section || '';
     const label = document.createElement('small');
-    label.textContent = labels[section] || '';
+    label.textContent = hit.external ? 'LinkedIn' : labels[section] || '';
     const excerpt = document.createElement('p');
     // Pagefind emits highlight markup. Copy only text and mark nodes into the live DOM.
-    const fragment = new DOMParser().parseFromString(hit.excerpt,'text/html');
-    for (const node of fragment.body.childNodes) {
-      if (node instanceof HTMLElement && node.tagName === 'MARK') {
-        const mark = document.createElement('mark');
-        mark.textContent = node.textContent;
-        excerpt.append(mark);
-      } else excerpt.append(node.textContent || '');
+    if (hit.external) {
+      excerpt.textContent = hit.excerpt;
+    } else {
+      const fragment = new DOMParser().parseFromString(hit.excerpt,'text/html');
+      for (const node of fragment.body.childNodes) {
+        if (node instanceof HTMLElement && node.tagName === 'MARK') {
+          const mark = document.createElement('mark');
+          mark.textContent = node.textContent;
+          excerpt.append(mark);
+        } else excerpt.append(node.textContent || '');
+      }
     }
     link.append(label,title,excerpt);
     link.addEventListener('click', () => track('search_result_clicked', {section}));
     li.append(link);
     results.append(li);
+  }
+
+  async function searchWebsite(query: string) {
+    engine ??= (async () => {
+      const module: Engine = await import(/* @vite-ignore */ dialog.dataset.engine!);
+      await module.options({baseUrl:dialog.dataset.base!});
+      await module.init();
+      return module;
+    })().catch(error => { engine = undefined; throw error; });
+    const {results: matches} = await (await engine).search(query);
+    return {count: matches.length, hits: await Promise.all(matches.slice(0,12).map(match => match.data()))};
+  }
+
+  let linkedInIndex: Promise<LinkedInRecord[]> | undefined;
+  const normalize = (text: string) => text.normalize('NFD').replace(/\p{Diacritic}/gu, '').toLowerCase();
+
+  async function searchLinkedIn(query: string) {
+    const terms = normalize(query).match(/[\p{L}\p{N}]+/gu);
+    if (!terms) return {count: 0, hits: []};
+    linkedInIndex ??= fetch(dialog.dataset.linkedinIndex!).then(response => {
+      if (!response.ok) throw new Error('LinkedIn search index unavailable');
+      return response.json() as Promise<LinkedInRecord[]>;
+    }).catch(error => { linkedInIndex = undefined; throw error; });
+    const records = await linkedInIndex;
+    const matches = records.map(record => {
+      const title = normalize(record.title);
+      const text = normalize(`${record.title} ${record.description} ${record.keywords}`);
+      return {record, score: terms.every(term => text.includes(term))
+        ? 1 + terms.filter(term => title.includes(term)).length : 0};
+    }).filter(match => match.score > 0).sort((a,b) => b.score - a.score);
+    const hits = matches.slice(0,12).map(({record}): Hit => ({
+      url: record.url, excerpt: record.description, meta: {title: record.title, section: 'insights'}, external: true,
+    }));
+    return {count: matches.length, hits};
   }
 
   input.addEventListener('input', () => {
@@ -87,24 +131,23 @@ const shortcuts = [[t.explore,'insights'],[t.tools[0][0],'labs/' + labIds[0]],[t
     status.textContent = query ? status.dataset.loading! : '';
     if (!query) return;
     timeout = window.setTimeout(async () => {
-      try {
-        engine ??= (async () => {
-          const module: Engine = await import(/* @vite-ignore */ dialog.dataset.engine!);
-          await module.options({baseUrl:dialog.dataset.base!});
-          await module.init();
-          return module;
-        })().catch(error => { engine = undefined; throw error; });
-        const {results: matches} = await (await engine).search(query);
-        const hits = await Promise.all(matches.slice(0,12).map(match => match.data()));
-        if (current !== revision) return;
-        track('search_performed', {result_count:matches.length});
-        status.textContent = hits.length ? `${status.dataset.count} · ${hits.length}` : status.dataset.none!;
-        hits.forEach(addHit);
-      } catch {
-        if (current !== revision) return;
+      const sources = await Promise.allSettled([searchWebsite(query), searchLinkedIn(query)]);
+      if (current !== revision) return;
+      if (sources.every(source => source.status === 'rejected')) {
         status.textContent = status.dataset.error!;
         shortcuts.hidden = false;
+        return;
       }
+      const matches = sources.map(source => source.status === 'fulfilled' ? source.value : {count:0, hits:[]});
+      const hits = [];
+      for (let i = 0; i < 12; i++) {
+        for (const source of matches) {
+          if (hits.length < 12 && source.hits[i]) hits.push(source.hits[i]);
+        }
+      }
+      track('search_performed', {result_count:matches.reduce((count, source) => count + source.count, 0)});
+      status.textContent = hits.length ? `${status.dataset.count} · ${hits.length}` : status.dataset.none!;
+      hits.forEach(addHit);
     }, 180);
   });
 

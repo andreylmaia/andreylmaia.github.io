@@ -1,0 +1,359 @@
+[
+  {
+    "id": "blocked-bank-account",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Uma conta bloqueada ainda pode movimentar dinheiro?",
+    "description": "Restrições de acesso, fundos e operações não são necessariamente a mesma coisa.",
+    "url": "https://lnkd.in/p/g7kxYjbi",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "blocked_frozen.jpeg"
+    ],
+    "featured": true,
+    "sortOrder": 1
+  },
+  {
+    "id": "ledger-change",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "O ledger é confiável. Mas consegue acompanhar as mudanças do produto?",
+    "description": "Uma reflexão sobre a arquitetura do ledger e a evolução dos produtos financeiros.",
+    "url": "https://lnkd.in/p/gh2MDmXY",
+    "publishedAt": null,
+    "language": "en",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      ""
+    ],
+    "featured": false,
+    "sortOrder": 2
+  },
+  {
+    "id": "ltv-fintech",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "LTV não é apenas receita multiplicada pelo tempo",
+    "description": "Por que margem, retenção e premissas importam mais do que uma fórmula simplificada.",
+    "url": "https://lnkd.in/p/gc2vhWRB",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "building",
+    "tags": [
+      "LinkedIn",
+      "Product",
+      "Technology"
+    ],
+    "images": [
+      "ltv.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 3
+  },
+  {
+    "id": "product-pitch-price",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Product, Pitch, Price: construir valor não basta",
+    "description": "Como posicionamento, preço e canais afetam a capacidade de capturar valor.",
+    "url": "https://lnkd.in/p/gdC2QizP",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "building",
+    "tags": [
+      "LinkedIn",
+      "Product",
+      "Technology"
+    ],
+    "images": [
+      "product_pich_price.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 4
+  },
+  {
+    "id": "china-innovation-competition",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Por que as empresas chinesas parecem copiar tudo?",
+    "description": "Na China, funcionalidades viram padrão rapidamente e a competição muda de camada.",
+    "url": "https://lnkd.in/p/gH3J5wpm",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "building",
+    "tags": [
+      "LinkedIn",
+      "Product",
+      "Technology"
+    ],
+    "images": [
+      "china_innovation_competition.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 5
+  },
+  {
+    "id": "engineering-complexity-china",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "O que aprendi na China sobre investir em complexidade",
+    "description": "Engenharia não é escolher sempre a arquitetura mais sofisticada, mas entender quando ela vale o custo.",
+    "url": "https://lnkd.in/p/gH9yWmiP",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "building",
+    "tags": [
+      "LinkedIn",
+      "Product",
+      "Technology"
+    ],
+    "images": [
+      "engineering_complexity_china.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 6
+  },
+  {
+    "id": "spi-security-layers",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Por que sistemas críticos não confiam apenas no TLS?",
+    "description": "No SPI, segurança depende de camadas complementares, incluindo rede, transporte e assinatura de mensagens.",
+    "url": "https://lnkd.in/p/gyyXBD9k",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "spi-security-layers.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 7
+  },
+  {
+    "id": "spb-message-schedules",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "As grades horárias do Sistema de Pagamentos Brasileiro",
+    "description": "As grades de mensagens do SFN refletem regras e necessidades operacionais de liquidação e devolução.",
+    "url": "https://lnkd.in/p/griiBVPM",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "spb-message-schedules.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 8
+  },
+  {
+    "id": "card-reusable-credentials",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "O problema estrutural das credenciais reutilizáveis em cartões",
+    "description": "PCI, tokenização e outros controles mitigam riscos ligados a credenciais reutilizáveis.",
+    "url": "https://lnkd.in/p/grj2FEX6",
+    "publishedAt": null,
+    "language": "en",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "card-reusable-credentials.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 9
+  },
+  {
+    "id": "where-money-exists",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Onde o dinheiro realmente existe?",
+    "description": "Saldo visível, saldo disponível e liquidação entre instituições representam realidades distintas.",
+    "url": "https://lnkd.in/p/gdnt9SYm",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "nature",
+    "tags": [
+      "LinkedIn",
+      "Money",
+      "Finance"
+    ],
+    "images": [
+      "where-money-exists.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 10
+  },
+  {
+    "id": "brazil-china-digital-payments",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Brasil e China: duas arquiteturas para pagamentos digitais",
+    "description": "Pix e os ecossistemas chineses de pagamento cresceram com estruturas e modelos de controle diferentes.",
+    "url": "https://lnkd.in/p/gK6wCJup",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "brazil-china-digital-payments.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 11
+  },
+  {
+    "id": "chargeback-risk",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Chargeback: o risco invisível dos pagamentos",
+    "description": "Autorização, liquidação e responsabilidade por disputas acontecem em momentos diferentes.",
+    "url": "https://lnkd.in/p/gspudXBY",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "chargeback-risk.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 12
+  },
+  {
+    "id": "rtgs-systemic-risk",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "STR e SPI existem para reduzir risco sistêmico",
+    "description": "A liquidação bruta em tempo real reduz exposição entre participantes, mas exige liquidez.",
+    "url": "https://lnkd.in/p/gmwa-Duc",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "rtgs-systemic-risk.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 13
+  },
+  {
+    "id": "spi-architecture",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Como funciona a arquitetura do SPI?",
+    "description": "Liquidação instantânea e final exige segurança, disponibilidade e gestão contínua de liquidez.",
+    "url": "https://lnkd.in/p/gudduM4t",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "spi-architecture.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 14
+  },
+  {
+    "id": "authorization-vs-settlement",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Autorização e liquidação não são a mesma coisa",
+    "description": "O momento da aprovação não é necessariamente o momento em que o dinheiro muda de dono.",
+    "url": "https://lnkd.in/p/gmwa-Duc",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "authorization-vs-settlement.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 15
+  },
+  {
+    "id": "backend-vs-payments",
+    "type": "post",
+    "platform": "linkedin",
+    "title": "Por que pagamentos exigem mais do que um backend convencional",
+    "description": "Consistência, estados financeiros e reconciliação mudam as prioridades da engenharia de software.",
+    "url": "https://lnkd.in/p/gZR578i6",
+    "publishedAt": null,
+    "language": "pt-BR",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "backend-vs-payments.jpeg"
+    ],
+    "featured": false,
+    "sortOrder": 16
+  },
+  {
+    "id": "technical-view-brazilian-payment-system",
+    "type": "article",
+    "platform": "linkedin",
+    "title": "Uma visão técnica do Sistema de Pagamentos Brasileiro",
+    "description": "Uma análise do SPB como sistema de sistemas: STR, SPI, RTGS, liquidez, ledger e reconciliação.",
+    "url": "https://lnkd.in/p/gbNvu23U",
+    "publishedAt": null,
+    "language": "en",
+    "category": "infrastructure",
+    "tags": [
+      "LinkedIn",
+      "Banking",
+      "Payments"
+    ],
+    "images": [
+      "technical-view-brazilian-payment-system.jpeg"
+    ],
+    "featured": true,
+    "sortOrder": 17
+  }
+]

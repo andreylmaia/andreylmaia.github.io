@@ -25,6 +25,7 @@ export function asset(path: string) {
 
 export const copy = {
   en: {
+    linkedin: {source: 'Source', website: 'Articles', post: 'LinkedIn Post', article: 'LinkedIn Article', read: 'Read on LinkedIn', newTab: 'opens in a new tab'},
     nav: ['Insights', 'Labs', 'Intelligence', 'Library', 'About', 'Connect', 'Privacy'],
     hero: ['Money.', 'Technology.', 'The art of building.'],
     position: 'Building banking & payment products in emerging markets.',
@@ -87,6 +88,7 @@ export const copy = {
     settled: 'Settlement complete', balanced: 'Balanced postings', volume: 'Illustrative payment volume',
   },
   pt: {
+    linkedin: {source: 'Origem', website: 'Artigos', post: 'Publicação no LinkedIn', article: 'Artigo no LinkedIn', read: 'Ler no LinkedIn', newTab: 'abre em uma nova aba'},
     nav: ['Insights', 'Labs', 'Inteligência', 'Biblioteca', 'Sobre', 'Contato', 'Privacidade'],
     hero: ['Dinheiro.', 'Tecnologia.', 'A arte de construir.'],
     position: 'Construindo produtos bancários e de pagamentos em mercados emergentes.',
